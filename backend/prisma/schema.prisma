@@ -12,7 +12,35 @@ datasource db {
 
 model Exercise {
   id Int @id @default(autoincrement())
+
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
+  endedAt DateTime?
+
+  isDeadLift Boolean
+
+  series Series[]
+}
+
+model Series {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  endedAt DateTime?
+
+  exerciseId Int
+  repetitions Repetition[]
+
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+}
+
+model Repetition {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  peakedReachedAt DateTime?
+  endedAt DateTime?
+
+  seriesId Int
+
+  series Series @relation(fields: [seriesId], references: [id])
 }

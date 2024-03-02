@@ -5,12 +5,10 @@ type Exercise = {
     name: string
 }
 
-export const listExercises = async (): Promise<Exercise[]> => {
-    const exercises: Exercise[] = await db.exercise.findMany({
-        select: {
-            id: true,
-            name: true,
-        }
+export async function listExercises(): Promise<Exercise[]> {
+    //return [{id: 1, name: "xx"}];
+    const exercises: any[] = await db.exercise.findMany({
+        select: { id: true }
     });
     return exercises;
-};
+}
