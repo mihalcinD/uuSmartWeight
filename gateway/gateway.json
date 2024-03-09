@@ -1,0 +1,1 @@
+[{"id":"0fad26f3ce718046","type":"function","z":"24dc8cca046fde9c","name":"function 1","func":"var isBacklog = flow.get(\"isBacklog\") || false;\n\nmsg.payload = isBacklog\n\nreturn msg;","outputs":1,"noerr":1,"initialize":"","finalize":"","libs":[],"x":290,"y":280,"wires":[["4f14ab8e74d10329"]]}]
