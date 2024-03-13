@@ -13,14 +13,57 @@ export async function listExercises(): Promise<Exercise[]> {
   return exercises;
 }
 
-export async function createExercise(
-  exercise: Omit<Exercise, "id">
-): Promise<Exercise> {
-  const result = await db.exercise.create({
-    data:{
-      isDeadLift:exercise.isDeadLift
+export async function createExercise(): Promise<void> {
+  const dbExercise = await db.exercise.create({
+    data: {
+      isDeadLift: false,
     }
   });
 
-  return result;
+  const dbSeries = await db.series.create({
+    data: {
+      exerciseId: dbExercise.id,
+    }
+  });
+
+  await db.repetition.create({
+    data: {
+      seriesId: dbSeries.id,
+    }
+  });
+}
+
+export async function endExercise(): Promise<void> {
+  const dbExercise = await db.exercise.findFirstOrThrow({
+    where: {
+      endedAt: null,
+    }
+  });
+
+  await db.exercise.update({
+    where: {
+      id: dbExercise.id,
+    },
+    data: {
+      endedAt: new Date(),
+    }
+  });
+
+  await db.series.updateMany({
+    where: {
+      endedAt: null,
+    },
+    data: {
+      endedAt: new Date(),
+    }
+  });
+
+  await db.repetition.updateMany({
+    where: {
+      endedAt: null,
+    },
+    data: {
+      endedAt: new Date(),
+    }
+  });
 }
