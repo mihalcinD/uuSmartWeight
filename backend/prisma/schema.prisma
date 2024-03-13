@@ -42,5 +42,24 @@ model Repetition {
 
   seriesId Int
 
+  peakRepetitionEntry RepetitionEntry? @relation("peakRepetitionEntry")
+  endRepetitionEntry RepetitionEntry? @relation("endRepetitionEntry")
+  repetitionEntries RepetitionEntry[] @relation("repetitionEntries")
+
   series Series @relation(fields: [seriesId], references: [id])
+}
+
+model RepetitionEntry {
+  id Int @id @default(autoincrement())
+
+  timestamp DateTime
+  value Int
+
+  peakRepetitionId Int? @unique
+  endRepetitionId Int? @unique
+  repetitionId Int?
+
+  peakRepetition Repetition? @relation("peakRepetitionEntry", fields: [peakRepetitionId], references: [id])
+  endRepetition Repetition? @relation("endRepetitionEntry", fields: [endRepetitionId], references: [id])
+  repetition Repetition? @relation("repetitionEntries", fields: [repetitionId], references: [id])
 }

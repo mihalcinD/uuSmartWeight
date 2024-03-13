@@ -12,3 +12,32 @@ export async function listSeries(): Promise<Series[]> {
     });
     return exercises;
 }
+
+export async function nextSeries(): Promise<void> {
+    const dbCurrentSeries = await db.series.findFirstOrThrow({
+        where: {
+            endedAt: null,
+        }
+    });
+
+    await db.series.update({
+        where: {
+            id: dbCurrentSeries.id,
+        },
+        data: {
+            endedAt: new Date(),
+        }
+    })
+  
+    const newDbSeries =  await db.series.create({
+      data: {
+        exerciseId: dbCurrentSeries.exerciseId,
+      }
+    });
+
+    await db.repetition.create({
+        data: {
+          seriesId: newDbSeries.id,
+        }
+    });
+  }

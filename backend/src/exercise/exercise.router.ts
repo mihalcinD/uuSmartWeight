@@ -1,40 +1,38 @@
 import type { Request, Response } from "express";
 import * as express from "express";
-import { body, validationResult } from "express-validator";
 
 import * as ExerciseService from "./exercise.service";
-import { request } from "http";
 
 export const exerciseRouter = express.Router();
 
 // Get all exercises
-exerciseRouter.get("/", async (request: Request, response: Response) => {
+exerciseRouter.get("/", async (req: Request, res: Response) => {
   try {
     const exercises = await ExerciseService.listExercises();
-    return response.status(200).json(exercises);
+    return res.status(200).json(exercises);
   } catch (e: any) {
-    return response.status(500).json(e.message);
+    return res.status(500).json(e.message);
   }
 });
 
 // Create exercise
-exerciseRouter.post(
-  "/create",
-  body("isDeadLift").isBoolean(),
-  async (request: Request, response: Response) => {
-
-    const errors = validationResult(request);
-
-    if (!errors.isEmpty()) {
-      return response.status(400).json({ errors: errors.array() });
-    }
-
+exerciseRouter.post("/create", async (req: Request, res: Response) => {
     try {
-      const exercise = request.body;
-      const newExercise = await ExerciseService.createExercise(exercise);
-      return response.status(200).json(newExercise);
+      await ExerciseService.createExercise();
+      return res.status(200);
     } catch (e: any) {
-      return response.status(500).json(e.message);
+      return res.status(500).json(e.message);
+    }
+  }
+);
+
+// End exercise
+exerciseRouter.post("/end", async (req: Request, res: Response) => {
+    try {
+      await ExerciseService.endExercise();
+      return res.status(200);
+    } catch (e: any) {
+      return res.status(500).json(e.message);
     }
   }
 );
