@@ -34,7 +34,7 @@ const bulkSchema =  {
         optional: true,
         errorMessage: "Value must be int, numberOfRepetitions | y-axis-value"
     }
-}
+};
 
 dataRouter.post("/bulk", 
     validate([
