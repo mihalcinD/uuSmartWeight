@@ -10,56 +10,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Device {
+  id Int @id @default(autoincrement())
+
+  token String @unique
+
+  exercises Exercise[]
+}
+
 model Exercise {
   id Int @id @default(autoincrement())
 
-  createdAt DateTime  @default(now())
+  createdAt DateTime
   endedAt   DateTime?
 
-  isDeadLift Boolean
-
   series Series[]
+
+  deviceId  Int
+  device Device @relation(fields: [deviceId], references: [id])
 }
 
 model Series {
   id Int @id @default(autoincrement())
 
-  createdAt DateTime  @default(now())
+  createdAt DateTime
   endedAt   DateTime?
 
-  exerciseId  Int
-  repetitions Repetition[]
+  numberOfRepetitions Int
 
+  points Point[]
+
+  exerciseId  Int
   exercise Exercise @relation(fields: [exerciseId], references: [id])
 }
 
-model Repetition {
+model Point {
   id Int @id @default(autoincrement())
-
-  createdAt       DateTime  @default(now())
-  peakedReachedAt DateTime?
-  endedAt         DateTime?
-
-  seriesId Int
-
-  peakRepetitionEntry RepetitionEntry? @relation("peakRepetitionEntry")
-  endRepetitionEntry RepetitionEntry? @relation("endRepetitionEntry")
-  repetitionEntries RepetitionEntry[] @relation("repetitionEntries")
-
-  series Series @relation(fields: [seriesId], references: [id])
-}
-
-model RepetitionEntry {
-  id Int @id @default(autoincrement())
-
-  timestamp DateTime
   value Int
+  createdAt DateTime
 
-  peakRepetitionId Int? @unique
-  endRepetitionId Int? @unique
-  repetitionId Int?
-
-  peakRepetition Repetition? @relation("peakRepetitionEntry", fields: [peakRepetitionId], references: [id])
-  endRepetition Repetition? @relation("endRepetitionEntry", fields: [endRepetitionId], references: [id])
-  repetition Repetition? @relation("repetitionEntries", fields: [repetitionId], references: [id])
+  seriesId  Int
+  series Series @relation(fields: [seriesId], references: [id])
 }

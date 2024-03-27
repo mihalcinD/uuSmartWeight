@@ -1,43 +1,59 @@
 import { db } from "../utils/db.server";
 
-type Series = {
-    id: number
-    name: string
-}
-
-export async function listSeries(): Promise<Series[]> {
-    //return [{id: 1, name: "xx"}];
-    const exercises: any[] = await db.series.findMany({
-        select: { id: true}
+export async function createSeries(deviceID: number, date: Date): Promise<void> {
+  // End unfinished Series
+  {  
+    await db.series.updateMany({
+      where: {
+        exercise: { 
+            deviceId: deviceID,
+        },
+        endedAt: null,
+      },
+      data: { endedAt: date },
     });
-    return exercises;
-}
+  }
+  //
 
-export async function nextSeries(): Promise<void> {
-    const dbCurrentSeries = await db.series.findFirstOrThrow({
+  // Create new Series
+  {
+    const unfinishedExercies = await db.exercise.findMany({
         where: {
+            deviceId: deviceID,
             endedAt: null,
         }
     });
 
-    await db.series.update({
-        where: {
-            id: dbCurrentSeries.id,
-        },
-        data: {
-            endedAt: new Date(),
-        }
-    })
+    if (unfinishedExercies.length > 1) {
+        throw Error("more than 1 unfinished Exercise")
+    }
+
+    if (unfinishedExercies.length == 0) {
+        throw Error("no unfinished Exercises")
+    }
   
-    const newDbSeries =  await db.series.create({
+    await db.series.create({
       data: {
-        exerciseId: dbCurrentSeries.exerciseId,
+        createdAt: date,
+        exerciseId: unfinishedExercies[0].id,
+        numberOfRepetitions: 0,
       }
     });
-
-    await db.repetition.create({
-        data: {
-          seriesId: newDbSeries.id,
-        }
-    });
   }
+  //
+}
+
+export async function endSeries(deviceID: number, date: Date): Promise<void> {
+  // End all unfinished Series (TODO: only one ?)
+  await db.series.updateMany({
+    where: {
+        exercise: {
+            deviceId: deviceID,
+        },
+        endedAt: null,
+    },
+    data: {
+      endedAt: date,
+    }
+  });
+}
