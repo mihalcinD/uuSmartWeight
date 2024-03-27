@@ -1,69 +1,72 @@
 import { db } from "../utils/db.server";
 
-type Exercise = {
-  id: number;
-  isDeadLift: boolean;
-};
+export async function createExercise(deviceId: number, date: Date): Promise<void> {
+  // End unfinished Exercises and Series
+  {  
+    await db.exercise.updateMany({
+      where: {
+        deviceId,
+        endedAt: null,
+      },
+      data: { endedAt: date },
+    });
+    await db.series.updateMany({
+      where: {
+        exercise: {
+          deviceId,
+          endedAt: null,
+        }
+      },
+      data: { endedAt: date },
+    });
+  }
+  //
 
-export async function listExercises(): Promise<Exercise[]> {
-  //return [{id: 1, name: "xx"}];
-  const exercises: any[] = await db.exercise.findMany({
-    select: { id: true },
-  });
-  return exercises;
+  // Create new Exercise and Series
+  {
+    const dbExercise = await db.exercise.create({
+      data: {
+        createdAt: date,
+        deviceId: deviceId,
+      }
+    });
+  
+    await db.series.create({
+      data: {
+        createdAt: date,
+        exerciseId: dbExercise.id,
+        numberOfRepetitions: 0,
+      }
+    });
+  }
+  //
 }
 
-export async function createExercise(): Promise<void> {
-  const dbExercise = await db.exercise.create({
-    data: {
-      isDeadLift: false,
-    }
-  });
+export async function endExercise(deviceId: number, date: Date): Promise<void> {
+  // End all unfinished Exercises (TODO: only one ?)
+  {
+    await db.series.updateMany({
+      where: {
+        exercise: {
+          deviceId: deviceId,
+          endedAt: null,
+        },
+        endedAt: null,
+      },
+      data: {
+        endedAt: date,
+      }
+    });
 
-  const dbSeries = await db.series.create({
-    data: {
-      exerciseId: dbExercise.id,
-    }
-  });
-
-  await db.repetition.create({
-    data: {
-      seriesId: dbSeries.id,
-    }
-  });
-}
-
-export async function endExercise(): Promise<void> {
-  const dbExercise = await db.exercise.findFirstOrThrow({
-    where: {
-      endedAt: null,
-    }
-  });
-
-  await db.exercise.update({
-    where: {
-      id: dbExercise.id,
-    },
-    data: {
-      endedAt: new Date(),
-    }
-  });
-
-  await db.series.updateMany({
-    where: {
-      endedAt: null,
-    },
-    data: {
-      endedAt: new Date(),
-    }
-  });
-
-  await db.repetition.updateMany({
-    where: {
-      endedAt: null,
-    },
-    data: {
-      endedAt: new Date(),
-    }
-  });
+    await db.exercise.updateMany({
+      where: {
+        deviceId: deviceId,
+        endedAt: null,
+      },
+      data: {
+        endedAt: date,
+      }
+    });
+  }
+  //
 }
