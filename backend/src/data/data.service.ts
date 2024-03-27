@@ -18,12 +18,13 @@ interface Data {
 }
 
 export async function createBulk(deviceToken: string, bulkData: Data[]): Promise<void> {
-    const device = await db.device.findUnique({
+    const device: any = await db.device.findUnique({
         where: {token: deviceToken},
         select: {
             id: true,
         },
     });
+    
     const deviceId = device.id;
 
     const lastExercise = await db.exercise.findFirst({
