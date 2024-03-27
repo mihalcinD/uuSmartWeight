@@ -18,19 +18,63 @@ interface Data {
 }
 
 export async function createBulk(deviceToken: string, bulkData: Data[]): Promise<void> {
-    const device = (await db.device.findUnique({where: {token: deviceToken}}));
+    const device = await db.device.findUnique({
+        where: {token: deviceToken},
+        select: {
+            id: true,
+        },
+    });
+    const deviceId = device.id;
+
+    const lastExercise = await db.exercise.findFirst({
+        where: { deviceId },
+        orderBy: {
+            createdAt: "desc",
+        },    
+    });
+
+    const lastSeries = await db.series.findFirst({
+        where: {
+            exercise: { deviceId }
+        },
+        orderBy: {
+            createdAt: "desc",
+        },    
+    });
+
+    const lastPoint = await db.point.findFirst({
+        where: {
+            series: {
+                exercise: { deviceId }
+            }
+        },
+        orderBy: {
+            createdAt: "desc",
+        },    
+    });
+
+    let latestTimestamp = lastExercise.endedAt ?? lastExercise.createdAt;
+
+    const latestSeriesTimestamp = lastSeries.endedAt ?? lastSeries.createdAt;
+    if (latestSeriesTimestamp > latestTimestamp) latestTimestamp = latestSeriesTimestamp;
+
+    if (lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
+
+    if (bulkData[bulkData.length - 1].ts < latestTimestamp.getMilliseconds()) {
+        throw Error("Latest data in build has timestamp before lates timestamp in database");
+    }
 
     for await (const data of bulkData) {
         const curDate = new Date(data.ts);
         
         try {
             switch(data.event) {
-                case EventType.EXERCISE_START: createExercise(device.id, curDate);
-                case EventType.SERIES_START: createSeries(device.id, curDate);
-                case EventType.RAW_VALUE: createPoint(device.id, curDate, data.value);
-                case EventType.REP_COUNT: updateRepCount(device.id, data.value);
-                case EventType.SERIES_END: endSeries(device.id, curDate);
-                case EventType.EXERCISE_END: endExercise(device.id, curDate);
+                case EventType.EXERCISE_START: createExercise(deviceId, curDate);
+                case EventType.SERIES_START: createSeries(deviceId, curDate);
+                case EventType.RAW_VALUE: createPoint(deviceId, curDate, data.value);
+                case EventType.REP_COUNT: updateRepCount(deviceId, data.value);
+                case EventType.SERIES_END: endSeries(deviceId, curDate);
+                case EventType.EXERCISE_END: endExercise(deviceId, curDate);
             }
         } catch(e) {
             throw(e);
