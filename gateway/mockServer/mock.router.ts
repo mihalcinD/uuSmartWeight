@@ -10,15 +10,18 @@ import { request } from "http";
 
 //TODO ask Jakub why the file cannot be compiled, some problem with MockRes type 
 //and switch cases. For now type is number
-let mockRes: number = 500
+let mockRes: number = 200
 
 export const mockRouter = express.Router();
 
 // postData
 mockRouter.post("/postData", async (request: Request, response: Response) => {
   
+    //log REQ body
     console.log(request.body)
 
+
+    //responses
     switch (mockRes) {
         case 200:
             
