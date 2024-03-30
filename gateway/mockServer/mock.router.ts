@@ -12,14 +12,28 @@ import { request } from "http";
 //and switch cases. For now type is number
 let mockRes: number = 200
 
+
+//Sleep function. Needs to be called in async func with await
+const sleep = (delay: number) => new Promise((response) => setTimeout(response, delay))
+
+const sleepTimes = [2000, 3000]
+let currSleepTime = 0
+
 export const mockRouter = express.Router();
 
 // postData
 mockRouter.post("/postData", async (request: Request, response: Response) => {
   
     //log REQ body
+    console.log("[REQ body]: ")
     console.log(request.body)
-
+    
+    //Used to test gateway timeout
+    console.log("[Mock Server] going to sleep")
+    currSleepTime++
+    await sleep(sleepTimes[currSleepTime%2])
+    console.log("[Mock Server] awake")
+    
 
     //responses
     switch (mockRes) {
