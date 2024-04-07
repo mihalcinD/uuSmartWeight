@@ -1,6 +1,25 @@
 import { db } from "../utils/db.server";
+import { getActiveExerciseOrCreateNew } from "../exercise/exercise.service";
 
-export async function createSeries(deviceID: number, date: Date): Promise<void> {
+export async function getActiveSeriesOrCreateNew(deviceId: number, date: Date): Promise<number> {
+  let activeSeriesID = 0;
+
+  try {
+      const activeSeries = await db.series.findFirstOrThrow({
+          where: {
+              exercise: { deviceId },
+              endedAt: null,
+          }
+      });
+      activeSeriesID = activeSeries.id;
+  } catch {
+      activeSeriesID = await createSeries(deviceId, date);
+  }
+
+  return activeSeriesID;
+}
+
+export async function createSeries(deviceID: number, date: Date): Promise<number> {
   // End unfinished Series
   {  
     await db.series.updateMany({
@@ -15,41 +34,27 @@ export async function createSeries(deviceID: number, date: Date): Promise<void> 
   }
   //
 
-  // Create new Series
-  {
-    const unfinishedExercies = await db.exercise.findMany({
-        where: {
-            deviceId: deviceID,
-            endedAt: null,
-        }
-    });
+  // Create new Series and return its id
+  const activeExerciseID = await getActiveExerciseOrCreateNew(deviceID, date);
 
-    if (unfinishedExercies.length > 1) {
-        throw Error("more than 1 unfinished Exercise")
-    }
-
-    if (unfinishedExercies.length == 0) {
-        throw Error("no unfinished Exercises")
-    }
-  
-    await db.series.create({
-      data: {
-        createdAt: date,
-        exerciseId: unfinishedExercies[0].id,
-        numberOfRepetitions: 0,
+  const newSeries = await db.series.create({
+    data: {
+      createdAt: date,
+      numberOfRepetitions: 0,
+      exercise: {
+        connect: {id: activeExerciseID}
       }
-    });
-  }
-  //
+    }
+  });
+  
+  return newSeries.id;
 }
 
-export async function endSeries(deviceID: number, date: Date): Promise<void> {
+export async function endSeries(deviceId: number, date: Date): Promise<void> {
   // End all unfinished Series (TODO: only one ?)
   await db.series.updateMany({
     where: {
-        exercise: {
-            deviceId: deviceID,
-        },
+        exercise: { deviceId },
         endedAt: null,
     },
     data: {

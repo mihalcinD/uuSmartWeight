@@ -1,5 +1,5 @@
 import { createExercise, endExercise } from "../exercise/exercise.service";
-import { createSeries, endSeries } from "../series/series.service";
+import { createSeries, endSeries, getActiveSeriesOrCreateNew } from "../series/series.service";
 import { db } from "../utils/db.server";
 
 export enum EventType {
@@ -11,71 +11,112 @@ export enum EventType {
     EXERCISE_END,
 } 
 
-interface Data {
+export interface Data {
     ts: number
     event: EventType
     value?: number
 }
 
 export async function createBulk(deviceToken: string, bulkData: Data[]): Promise<void> {
-    const device: any = await db.device.findUnique({
+    let deviceId = 0;
+
+    const deviceFromToken: any = await db.device.findUnique({
         where: {token: deviceToken},
         select: {
             id: true,
         },
     });
+
+    // If device was already created check if timestamp of 
+    if (deviceFromToken != null) {
+        deviceId = deviceFromToken.id;
+
+        const lastExercise: any = await db.exercise.findFirst({
+            where: { deviceId },
+            select: {
+                createdAt: true,
+                endedAt: true,
+            }, 
+            orderBy: {
+                createdAt: "desc",
+            },    
+        });
     
-    const deviceId = device.id;
-
-    const lastExercise = await db.exercise.findFirst({
-        where: { deviceId },
-        orderBy: {
-            createdAt: "desc",
-        },    
-    });
-
-    const lastSeries = await db.series.findFirst({
-        where: {
-            exercise: { deviceId }
-        },
-        orderBy: {
-            createdAt: "desc",
-        },    
-    });
-
-    const lastPoint = await db.point.findFirst({
-        where: {
-            series: {
+        const lastSeries: any = await db.series.findFirst({
+            where: {
                 exercise: { deviceId }
+            },
+            select: {
+                createdAt: true,
+                endedAt: true,
+            }, 
+            orderBy: {
+                createdAt: "desc",
+            },    
+        });
+    
+        const lastPoint: any = await db.point.findFirst({
+            where: {
+                series: {
+                    exercise: { deviceId }
+                }
+            },
+            select: { createdAt: true }, 
+            orderBy: {
+                createdAt: "desc",
+            },    
+        });
+        
+        let latestTimestamp = lastExercise?.endedAt ?? lastExercise?.createdAt;
+    
+        const latestSeriesTimestamp = lastSeries?.endedAt ?? lastSeries?.createdAt;
+        if (latestSeriesTimestamp && latestSeriesTimestamp > latestTimestamp) latestTimestamp = latestSeriesTimestamp;
+    
+        if (lastPoint && lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
+       
+        if (latestTimestamp && bulkData[0].ts < latestTimestamp.getTime()) {
+            throw Error("First data in bulk has timestamp before lates timestamp in database");
+        }
+    } else {
+        // If there is no device mathing the token we create a new one
+        const dbDevice = await db.device.create({
+            data: {
+                token: deviceToken,
             }
-        },
-        orderBy: {
-            createdAt: "desc",
-        },    
-    });
+        });
 
-    let latestTimestamp = lastExercise.endedAt ?? lastExercise.createdAt;
-
-    const latestSeriesTimestamp = lastSeries.endedAt ?? lastSeries.createdAt;
-    if (latestSeriesTimestamp > latestTimestamp) latestTimestamp = latestSeriesTimestamp;
-
-    if (lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
-
-    if (bulkData[bulkData.length - 1].ts < latestTimestamp.getMilliseconds()) {
-        throw Error("Latest data in build has timestamp before lates timestamp in database");
-    }
+        deviceId = dbDevice.id;
+    } 
 
     for await (const data of bulkData) {
         const curDate = new Date(data.ts);
-        
+
         try {
             switch(data.event) {
-                case EventType.EXERCISE_START: createExercise(deviceId, curDate);
-                case EventType.SERIES_START: createSeries(deviceId, curDate);
-                case EventType.RAW_VALUE: createPoint(deviceId, curDate, data.value);
-                case EventType.REP_COUNT: updateRepCount(deviceId, data.value);
-                case EventType.SERIES_END: endSeries(deviceId, curDate);
-                case EventType.EXERCISE_END: endExercise(deviceId, curDate);
+                case EventType.EXERCISE_START: {
+                    await createExercise(deviceId, curDate);
+                    break;
+                }
+                case EventType.SERIES_START: {
+                    await createSeries(deviceId, curDate);
+                    break;
+                }
+                case EventType.RAW_VALUE: {
+                    await createPoint(deviceId, curDate, data.value);
+                    break;
+                }
+                case EventType.REP_COUNT: {
+                    await updateRepCount(deviceId, curDate, data.value);
+                    break;
+                }
+                case EventType.SERIES_END: {
+                    await endSeries(deviceId, curDate);
+                    break;
+                }
+                case EventType.EXERCISE_END: {
+                    await endExercise(deviceId, curDate);
+                    break;
+                }
             }
         } catch(e) {
             throw(e);
@@ -85,35 +126,27 @@ export async function createBulk(deviceToken: string, bulkData: Data[]): Promise
 
 async function createPoint(deviceId: number, date: Date, value: number): Promise<void> {
     // Create new Point for active Series
-        const activeSeries = await db.series.findFirstOrThrow({
-            where: {
-                exercise: { deviceId },
-                endedAt: null,
-            }
-        });
+        const activeSeriesID = await getActiveSeriesOrCreateNew(deviceId, date);
 
         await db.point.create({
             data: {
               createdAt: date,
               value,
-              seriesId: activeSeries.id,
+              series: {
+                connect: {id: activeSeriesID}
+              }
             }
         });
     //
 }
 
-async function updateRepCount(deviceId: number, numberOfRepetitions: number): Promise<void> {
+async function updateRepCount(deviceId: number, date: Date, numberOfRepetitions: number): Promise<void> {
     // Create new Point for active Series
-        const activeSeries = await db.series.findFirstOrThrow({
-            where: {
-                exercise: { deviceId },
-                endedAt: null,
-            }
-        });
+        const activeSeriesID = await getActiveSeriesOrCreateNew(deviceId, date);
 
         await db.series.update({
             where: {
-                id: activeSeries.id,
+                id: activeSeriesID,
             },
             data: {
                 numberOfRepetitions,
