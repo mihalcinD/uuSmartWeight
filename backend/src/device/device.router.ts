@@ -13,7 +13,7 @@ deviceRouter.get("/detail",
             const parsedDateQuery = Date.parse(String(req.query.date));
             
             if (isNaN(deviceID) || isNaN(parsedDateQuery)) {
-                return res.status(500).send("invalid query data");
+                return res.status(400).send("invalid query data");
             }
 
             const date = new Date(parsedDateQuery);
