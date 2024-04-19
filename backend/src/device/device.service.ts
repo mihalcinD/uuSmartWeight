@@ -7,15 +7,24 @@ interface DeviceDetail {
   points: number
 }
 
-export async function getDeviceDetail(deviceToken: string, currentDate: Date): Promise<DeviceDetail> {
+const MINUTE_MULTIPLIER = 1/60_000;
+
+export async function getDeviceDetail(id: number, currentDate: Date): Promise<DeviceDetail> {
   try {
-      const dbDevice = await db.device.findUniqueOrThrow({
+      const tommorow = new Date(currentDate)
+      tommorow.setDate(currentDate.getDate() + 1);
+
+      const dbDevice: any = await db.device.findUniqueOrThrow({
           where: {
-              token: deviceToken,
+            id,
           },
           select: {
             exercises: {
               where: {
+                createdAt: {
+                  gte: currentDate,
+                  lte:  tommorow,
+                },
                 endedAt: {
                   not: null,
                 },
@@ -39,7 +48,7 @@ export async function getDeviceDetail(deviceToken: string, currentDate: Date): P
 
       for (const dbExercise of dbDevice.exercises) {
         numberOfSeries += dbExercise.series.length;
-        totalTime += dbExercise.endedAt.getTime() - dbExercise.endedAt.getTime();
+        totalTime += dbExercise.endedAt.getTime() - dbExercise.createdAt.getTime();
 
         points += 10 + dbExercise.series.length * 5;
         for (const dbSeries of dbExercise.series) {
@@ -47,7 +56,7 @@ export async function getDeviceDetail(deviceToken: string, currentDate: Date): P
         }
       }
 
-      points += totalTime % 60_000; 
+      points += Math.round(totalTime * MINUTE_MULTIPLIER);
 
       return {
         numberOfExercises: dbDevice.exercises.length,

@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 import { exerciseRouter } from "./exercise/exercise.router";
 import { seriesRouter } from "./series/series.router";
 import { dataRouter } from "./data/data.router";
+import { deviceRouter } from "./device/device.router";
 import * as expressValidator from "express-validator";
 
 dotenv.config();
@@ -19,6 +20,8 @@ function main() {
     app.use(express.json());
 
     app.use("/data", dataRouter);
+
+    app.use("/device", deviceRouter);
 
     app.listen(process.env.PORT, () => console.log(`Express app running on port ${process.env.PORT}!`));
 }
