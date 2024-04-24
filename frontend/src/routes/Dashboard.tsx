@@ -1,12 +1,10 @@
-import { Typography } from '@mui/material';
 import ContentWrapper from '../components/ContentWrapper.tsx';
+import GreetingTitle from '../components/GreetingTitle.tsx';
 
 const Dashboard = () => {
   return (
     <ContentWrapper>
-      <Typography variant={'h2'} component={'h1'} style={{ fontWeight: 'bold' }}>
-        Good morning, David!
-      </Typography>
+      <GreetingTitle />
     </ContentWrapper>
   );
 };
