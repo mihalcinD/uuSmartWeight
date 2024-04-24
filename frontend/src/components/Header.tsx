@@ -2,9 +2,14 @@ import { AppBar, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from '
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useState, MouseEvent } from 'react';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import { useThemeContext } from '../context/ThemeContext.tsx';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const { toggleMode, mode } = useThemeContext();
+
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -26,15 +31,20 @@ const Header = () => {
           </Typography>
         </Stack>
 
-        <IconButton
-          size="large"
-          aria-label="Home page"
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
-          color="inherit"
-          onClick={handleOpenUserMenu}>
-          <PermIdentityOutlinedIcon />
-        </IconButton>
+        <Stack direction={'row'} gap={1}>
+          <IconButton size="large" onClick={toggleMode} color="inherit">
+            {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+          <IconButton
+            size="large"
+            aria-label="Home page"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            color="inherit"
+            onClick={handleOpenUserMenu}>
+            <PermIdentityOutlinedIcon />
+          </IconButton>
+        </Stack>
 
         <Menu
           sx={{ mt: '45px' }}
