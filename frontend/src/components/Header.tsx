@@ -44,9 +44,6 @@ const Header = () => {
         }}>
         <Stack direction={'row'} alignItems={'center'} gap={1}>
           <FitnessCenterIcon fontSize={'large'} />
-          <Typography variant={'h5'} component={'h1'} style={{ fontWeight: '800' }}>
-            uuSmartWeight
-          </Typography>
         </Stack>
 
         <Stack direction={'row'} gap={1} alignItems={'center'}>
