@@ -1,6 +1,7 @@
-import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { AppBar, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from '@mui/material';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useState, MouseEvent } from 'react';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -15,9 +16,16 @@ const Header = () => {
       <Toolbar
         sx={{
           display: 'flex',
-          justifyContent: { xs: 'space-between', lg: 'flex-end' },
+          justifyContent: 'space-between',
           alignItems: 'center',
         }}>
+        <Stack direction={'row'} alignItems={'center'} gap={1}>
+          <FitnessCenterIcon fontSize={'large'} />
+          <Typography variant={'h5'} component={'h1'} style={{ fontWeight: '800' }}>
+            uuSmartWeight
+          </Typography>
+        </Stack>
+
         <IconButton
           size="large"
           aria-label="Home page"
