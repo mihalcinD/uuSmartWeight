@@ -18,14 +18,11 @@ dataRouter.post("/bulk",
         check("*.deviceToken").isString(),
     ]),
     async (req: Request, res: Response) => {
-        try {
-            const doneIDs = await DataService.createBulk(req.body.sort((data1: Data, data2: Data) => data1.ts - data2.ts));
+        const {doneIDs, errored} = await DataService.createBulk(req.body.sort((data1: Data, data2: Data) => data1.ts - data2.ts));
 
-            return res.status(200).send(doneIDs);
-        } catch (e: any) {
-            console.error(e);
-
-            return res.status(500).json(e.message).send();
+        if (errored) {
+            return res.status(400).send(doneIDs);
         }
+        return res.status(200).send(doneIDs);
     }
 );

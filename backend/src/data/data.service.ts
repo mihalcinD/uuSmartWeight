@@ -23,7 +23,12 @@ type DeviceTokenDeviceID = {
     [key: string]: number;
   };
 
-export async function createBulk(bulkData: Data[]): Promise<number[]> {
+interface CreateBulkResponse {
+    doneIDs: number[]
+    errored: boolean
+}
+
+export async function createBulk(bulkData: Data[]): Promise<CreateBulkResponse> {
     let testedDeviceTokens: string[] = [];
     let deviceTokenDeviceID: DeviceTokenDeviceID = {};
 
@@ -134,11 +139,11 @@ export async function createBulk(bulkData: Data[]): Promise<number[]> {
             }
             doneIDs.push(data.id);
         } catch(e) {
-            throw(doneIDs);
+            return {doneIDs, errored: true};
         }
     }
 
-    return doneIDs;
+    return {doneIDs, errored: false};
 }
 
 async function createPoint(deviceId: number, date: Date, value: number): Promise<void> {
