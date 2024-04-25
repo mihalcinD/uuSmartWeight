@@ -14,12 +14,14 @@ dataRouter.post("/bulk",
         check("*.event").isIn(Object.values(EventType)).not().isEmpty(),
         check("*.ts").isInt().not().isEmpty(),
         check("*.value").isInt(),
+        check("*.id").isInt(),
+        check("*.deviceToken").isString(),
     ]),
     async (req: Request, res: Response) => {
         try {
-            await DataService.createBulk(req.header("Authorization"), req.body.sort((data1: Data, data2: Data) => data1.ts - data2.ts));
+            const doneIDs = await DataService.createBulk(req.body.sort((data1: Data, data2: Data) => data1.ts - data2.ts));
 
-            return res.status(200).send();
+            return res.status(200).send(doneIDs);
         } catch (e: any) {
             console.error(e);
 

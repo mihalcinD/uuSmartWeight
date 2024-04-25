@@ -12,116 +12,133 @@ export enum EventType {
 } 
 
 export interface Data {
+    id: number
     ts: number
     event: EventType
     value?: number
+    deviceToken: string
 }
 
-export async function createBulk(deviceToken: string, bulkData: Data[]): Promise<void> {
-    let deviceId = 0;
+type DeviceTokenDeviceID = {
+    [key: string]: number;
+  };
 
-    const deviceFromToken: any = await db.device.findUnique({
-        where: {token: deviceToken},
-        select: {
-            id: true,
-        },
-    });
+export async function createBulk(bulkData: Data[]): Promise<number[]> {
+    let testedDeviceTokens: string[] = [];
+    let deviceTokenDeviceID: DeviceTokenDeviceID = {};
 
-    // If device was already created check if timestamp of 
-    if (deviceFromToken != null) {
-        deviceId = deviceFromToken.id;
+    for (const data of bulkData) {
+        if (testedDeviceTokens.includes(data.deviceToken)) continue;
 
-        const lastExercise: any = await db.exercise.findFirst({
-            where: { deviceId },
+        const deviceFromToken: any = await db.device.findUnique({
+            where: {token: data.deviceToken},
             select: {
-                createdAt: true,
-                endedAt: true,
-            }, 
-            orderBy: {
-                createdAt: "desc",
-            },    
+                id: true,
+            },
         });
     
-        const lastSeries: any = await db.series.findFirst({
-            where: {
-                exercise: { deviceId }
-            },
-            select: {
-                createdAt: true,
-                endedAt: true,
-            }, 
-            orderBy: {
-                createdAt: "desc",
-            },    
-        });
+        // If device was already created check if timestamp of 
+        if (deviceFromToken != null) {
+            deviceTokenDeviceID[data.deviceToken] = deviceFromToken.id;
     
-        const lastPoint: any = await db.point.findFirst({
-            where: {
-                series: {
-                    exercise: { deviceId }
-                }
-            },
-            select: { createdAt: true }, 
-            orderBy: {
-                createdAt: "desc",
-            },    
-        });
+            const lastExercise: any = await db.exercise.findFirst({
+                where: { deviceId: deviceFromToken.id },
+                select: {
+                    createdAt: true,
+                    endedAt: true,
+                }, 
+                orderBy: {
+                    createdAt: "desc",
+                },    
+            });
         
-        let latestTimestamp = lastExercise?.endedAt ?? lastExercise?.createdAt;
-    
-        const latestSeriesTimestamp = lastSeries?.endedAt ?? lastSeries?.createdAt;
-        if (latestSeriesTimestamp && latestSeriesTimestamp > latestTimestamp) latestTimestamp = latestSeriesTimestamp;
-    
-        if (lastPoint && lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
-       
-        if (latestTimestamp && bulkData[0].ts < latestTimestamp.getTime()) {
-            throw Error("First data in bulk has timestamp before lates timestamp in database");
-        }
-    } else {
-        // If there is no device mathing the token we create a new one
-        const dbDevice = await db.device.create({
-            data: {
-                token: deviceToken,
+            const lastSeries: any = await db.series.findFirst({
+                where: {
+                    exercise: { deviceId: deviceFromToken.id }
+                },
+                select: {
+                    createdAt: true,
+                    endedAt: true,
+                }, 
+                orderBy: {
+                    createdAt: "desc",
+                },    
+            });
+        
+            const lastPoint: any = await db.point.findFirst({
+                where: {
+                    series: {
+                        exercise: { deviceId: deviceFromToken.id }
+                    }
+                },
+                select: { createdAt: true }, 
+                orderBy: {
+                    createdAt: "desc",
+                },    
+            });
+            
+            let latestTimestamp = lastExercise?.endedAt ?? lastExercise?.createdAt;
+        
+            const latestSeriesTimestamp = lastSeries?.endedAt ?? lastSeries?.createdAt;
+            if (latestSeriesTimestamp && latestSeriesTimestamp > latestTimestamp) latestTimestamp = latestSeriesTimestamp;
+        
+            if (lastPoint && lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
+           
+            if (latestTimestamp && bulkData[0].ts < latestTimestamp.getTime()) {
+                throw Error("First data in bulk has timestamp before lates timestamp in database");
             }
-        });
+        } else {
+            // If there is no device mathing the token we create a new one
+            const dbDevice = await db.device.create({
+                data: {
+                    token: data.deviceToken,
+                }
+            });
+            
+            deviceTokenDeviceID[data.deviceToken] = dbDevice.id;
+        } 
+    }
 
-        deviceId = dbDevice.id;
-    } 
+    const doneIDs: number[] = [];
 
     for await (const data of bulkData) {
         const curDate = new Date(data.ts);
+        const activeDeviceID = deviceTokenDeviceID[data.deviceToken];
 
         try {
             switch(data.event) {
                 case EventType.EXERCISE_START: {
-                    await createExercise(deviceId, curDate);
+                    await createExercise(activeDeviceID, curDate);
                     break;
                 }
                 case EventType.SERIES_START: {
-                    await createSeries(deviceId, curDate);
+                    await createSeries(activeDeviceID, curDate);
                     break;
                 }
                 case EventType.RAW_VALUE: {
-                    await createPoint(deviceId, curDate, data.value);
+                    await createPoint(activeDeviceID, curDate, data.value);
                     break;
                 }
                 case EventType.REP_COUNT: {
-                    await updateRepCount(deviceId, curDate, data.value);
+                    await updateRepCount(activeDeviceID, curDate, data.value);
                     break;
                 }
                 case EventType.SERIES_END: {
-                    await endSeries(deviceId, curDate);
+                    await endSeries(activeDeviceID, curDate);
                     break;
                 }
                 case EventType.EXERCISE_END: {
-                    await endExercise(deviceId, curDate);
+                    await endExercise(activeDeviceID, curDate);
                     break;
                 }
             }
+            doneIDs.push(data.id);
         } catch(e) {
-            throw(e);
+            throw(doneIDs);
         }
     }
+
+    return doneIDs;
 }
 
 async function createPoint(deviceId: number, date: Date, value: number): Promise<void> {
