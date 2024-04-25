@@ -8,9 +8,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useMeContext } from '../context/MeContext.tsx';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
-import { routesConfig } from '../routes/config.ts';
+import { PageConfig, routesConfig } from '../routes/config.ts';
 
-type PageConfig = { label: string; path: string; search?: Record<string, string> };
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);

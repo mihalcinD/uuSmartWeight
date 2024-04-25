@@ -4,10 +4,15 @@ import Statistics from './Statistics.tsx';
 import SetDetail from './SetDetail.tsx';
 import Devices from './Devices.tsx';
 
-export const routesConfig: Record<
-  string,
-  { label: string; path: string; search?: Record<string, string>; component: () => JSX.Element; showInMenu?: boolean }
-> = {
+export type PageConfig = {
+  label: string;
+  path: string;
+  search?: Record<string, string>;
+  component: () => JSX.Element;
+  showInMenu?: boolean;
+};
+
+export const routesConfig: Record<string, PageConfig> = {
   DASHBOARD: {
     label: 'Home',
     path: '/',
