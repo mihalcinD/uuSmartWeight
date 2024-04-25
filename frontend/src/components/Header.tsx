@@ -7,14 +7,15 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useMeContext } from '../context/MeContext.tsx';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
+type PageConfig = { label: string; path: string; search?: Record<string, string> };
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const pages = [
+  const pages: PageConfig[] = [
     { label: 'Home', path: '/' },
-    { label: 'Statistics', path: '/statistics' },
+    { label: 'Statistics', path: '/statistics', search: { date: new Date().toISOString().slice(0, 10) } },
   ];
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -33,6 +34,13 @@ const Header = () => {
   };
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const navigateWithParams = ({ path, search }: PageConfig) => {
+    navigate({
+      pathname: path,
+      search: search ? createSearchParams(search).toString() : undefined,
+    });
   };
   return (
     <AppBar position="static" sx={{ boxShadow: 'none', borderBottom: 1, borderBottomColor: 'primary.main' }}>
@@ -78,7 +86,7 @@ const Header = () => {
                 <MenuItem
                   key={index}
                   onClick={() => {
-                    navigate(page.path);
+                    navigateWithParams(page);
                     handleCloseNavMenu();
                   }}
                   selected={pathname === page.path}>
@@ -93,7 +101,7 @@ const Header = () => {
                 key={index}
                 color={'inherit'}
                 style={{ background: page.path === pathname ? 'rgba(255, 255, 255, 0.15)' : 'transparent' }}
-                onClick={() => navigate(page.path)}>
+                onClick={() => navigateWithParams(page)}>
                 {page.label}
               </Button>
             ))}
