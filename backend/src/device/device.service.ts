@@ -1,8 +1,14 @@
 import { db } from "../utils/db.server";
 
+interface DeviceDetailSeries {
+  id: number
+  numberOfRepetitions: number
+  createdAt: Date
+  endedAt:   Date
+}
 interface DeviceDetail {
   numberOfExercises: number
-  numberOfSeries: number
+  series: DeviceDetailSeries[]
   totalTime: number
   points: number
 }
@@ -33,16 +39,19 @@ export async function getDeviceDetail(id: number, currentDate: Date): Promise<De
                 createdAt: true,
                 endedAt: true,
                 series: {
-                  select: {
-                    numberOfRepetitions: true,
+                  where: {
+                    endedAt: {
+                      not: null,
+                    }
                   }
-                }
+                },
               }
             }
           }
       });
       
       let numberOfSeries = 0;
+      let series: DeviceDetailSeries[] = [];
       let totalTime = 0;
       let points = 0;
 
@@ -52,6 +61,7 @@ export async function getDeviceDetail(id: number, currentDate: Date): Promise<De
 
         points += 10 + dbExercise.series.length * 5;
         for (const dbSeries of dbExercise.series) {
+          series.push(dbSeries);
           points += dbSeries.numberOfRepetitions * 2;
         }
       }
@@ -60,7 +70,7 @@ export async function getDeviceDetail(id: number, currentDate: Date): Promise<De
 
       return {
         numberOfExercises: dbDevice.exercises.length,
-        numberOfSeries,
+        series: [],
         totalTime,
         points,
       };

@@ -1,6 +1,31 @@
 import { db } from "../utils/db.server";
 import { getActiveExerciseOrCreateNew } from "../exercise/exercise.service";
 
+interface GetSeriesDetailPoint {
+  value: number
+  createdAt: Date
+}
+
+export async function getSeriesDetail(seriesID: number): Promise<GetSeriesDetailPoint[]> {
+  try {
+    const dbSeries = await db.series.findFirstOrThrow({
+        where: {
+          id: seriesID,
+          endedAt: {
+            not: null,
+          }
+        },
+        select: {
+          points: true,
+        }
+    });
+
+    return dbSeries.points;
+  } catch(e) {
+    throw(e);
+  }
+}
+
 export async function getActiveSeriesOrCreateNew(deviceId: number, date: Date): Promise<number> {
   let activeSeriesID = 0;
 
