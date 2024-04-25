@@ -3,8 +3,8 @@ import { db } from "../utils/db.server";
 interface DeviceDetailSeries {
   id: number
   numberOfRepetitions: number
-  createdAt: Date
-  endedAt:   Date
+  createdAt?: Date
+  endedAt?:   Date
 }
 interface DeviceDetail {
   numberOfExercises: number
@@ -15,7 +15,7 @@ interface DeviceDetail {
 
 const MINUTE_MULTIPLIER = 1/60_000;
 
-export async function getDeviceDetail(id: number, currentDate: Date): Promise<DeviceDetail> {
+export async function getDeviceDetail(id: number, currentDate: Date, detailed: boolean): Promise<DeviceDetail> {
   try {
       const tommorow = new Date(currentDate)
       tommorow.setDate(currentDate.getDate() + 1);
@@ -39,6 +39,9 @@ export async function getDeviceDetail(id: number, currentDate: Date): Promise<De
                 createdAt: true,
                 endedAt: true,
                 series: {
+                  select: detailed ? undefined : {
+                    numberOfRepetitions: true,
+                  },
                   where: {
                     endedAt: {
                       not: null,

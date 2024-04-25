@@ -12,7 +12,9 @@ deviceRouter.get("/detail",
 
             const parsedDateQuery = Date.parse(String(req.query.date));
             
-            if (isNaN(deviceID) || isNaN(parsedDateQuery)) {
+            const detailed = Number(req.query.detailed);
+
+            if (isNaN(detailed) || isNaN(deviceID) || isNaN(parsedDateQuery)) {
                 return res.status(400).send("invalid query data");
             }
 
@@ -22,7 +24,7 @@ deviceRouter.get("/detail",
             date.setSeconds(0);
             date.setMilliseconds(0);
 
-            const deviceDetail = await ExerciseService.getDeviceDetail(Number(req.query.id), date);
+            const deviceDetail = await ExerciseService.getDeviceDetail(deviceID, date, detailed == 1);
 
             return res.status(200).json(deviceDetail);
         } catch (e: any) {
