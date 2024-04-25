@@ -1,6 +1,6 @@
 import { AppBar, Box, Button, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from '@mui/material';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent, useMemo } from 'react';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import { useThemeContext } from '../context/ThemeContext.tsx';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
@@ -8,20 +8,17 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useMeContext } from '../context/MeContext.tsx';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { routesConfig } from '../routes/config.ts';
 
 type PageConfig = { label: string; path: string; search?: Record<string, string> };
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const pages: PageConfig[] = [
-    { label: 'Home', path: '/' },
-    { label: 'Statistics', path: '/statistics', search: { date: new Date().toISOString().slice(0, 10) } },
-  ];
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
   const { toggleMode, mode } = useThemeContext();
   const { me } = useMeContext();
+  const menuItems = useMemo(() => Object.values(routesConfig).filter(route => route.showInMenu), []);
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -82,7 +79,7 @@ const Header = () => {
               sx={{
                 display: { xs: 'block', md: 'none' },
               }}>
-              {pages.map((page, index) => (
+              {menuItems.map((page, index) => (
                 <MenuItem
                   key={index}
                   onClick={() => {
@@ -96,7 +93,7 @@ const Header = () => {
             </Menu>
           </Box>
           <Stack direction={'row'} gap={1} display={{ xs: 'none', md: 'flex' }}>
-            {pages.map((page, index) => (
+            {menuItems.map((page, index) => (
               <Button
                 key={index}
                 color={'inherit'}
