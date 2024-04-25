@@ -70,7 +70,7 @@ export async function getDeviceDetail(id: number, currentDate: Date): Promise<De
 
       return {
         numberOfExercises: dbDevice.exercises.length,
-        series: [],
+        series,
         totalTime,
         points,
       };
