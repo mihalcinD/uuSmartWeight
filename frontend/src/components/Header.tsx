@@ -39,7 +39,7 @@ const Header = () => {
     });
   };
   return (
-    <AppBar position="static" sx={{ boxShadow: 'none', borderBottom: 1, borderBottomColor: 'primary.main' }}>
+    <AppBar position="static" sx={{ boxShadow: 'none', borderBottom: 0.5, borderBottomColor: 'primary.main' }}>
       <Toolbar
         sx={{
           display: 'flex',
