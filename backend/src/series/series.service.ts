@@ -8,7 +8,7 @@ interface GetSeriesDetailPoint {
 
 export async function getSeriesDetail(seriesID: number): Promise<GetSeriesDetailPoint[]> {
   try {
-    const dbSeries = await db.series.findFirstOrThrow({
+    const dbSeries: any = await db.series.findFirstOrThrow({
         where: {
           id: seriesID,
           endedAt: {
