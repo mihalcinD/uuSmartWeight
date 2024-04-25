@@ -90,7 +90,7 @@ export async function createBulk(bulkData: Data[]): Promise<CreateBulkResponse> 
             if (lastPoint && lastPoint.createdAt > latestTimestamp) latestTimestamp = lastPoint.createdAt;
            
             if (latestTimestamp && bulkData[0].ts < latestTimestamp.getTime()) {
-                throw Error("First data in bulk has timestamp before lates timestamp in database");
+                return {doneIDs: [], errored: true};
             }
         } else {
             // If there is no device mathing the token we create a new one

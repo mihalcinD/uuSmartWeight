@@ -10,7 +10,7 @@ export const dataRouter = express.Router();
 
 dataRouter.post("/bulk", 
     validate([
-        header("Authorization").isString(),
+        //header("Authorization").isString(),
         check("*.event").isIn(Object.values(EventType)).not().isEmpty(),
         check("*.ts").isInt().not().isEmpty(),
         check("*.value").isInt(),
