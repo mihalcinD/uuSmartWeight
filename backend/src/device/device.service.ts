@@ -83,7 +83,7 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
           data: {
             bestScore: points,
           },
-        })
+        });
         bestScore = points;
       }
 
