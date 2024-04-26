@@ -11,6 +11,7 @@ interface DeviceDetail {
   series: DeviceDetailSeries[]
   totalTime: number
   points: number
+  bestScore: number
 }
 
 const MINUTE_MULTIPLIER = 1/60_000;
@@ -71,11 +72,27 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
 
       points += Math.round(totalTime * MINUTE_MULTIPLIER);
 
+      let bestScore = 0;
+      if (dbDevice?.bestScore > points) {
+        bestScore = dbDevice.bestScore
+      } else {
+        await db.device.update({
+          where: {
+            id,
+          },
+          data: {
+            bestScore: points,
+          },
+        })
+        bestScore = points;
+      }
+
       return {
         numberOfExercises: dbDevice.exercises.length,
         series,
         totalTime,
         points,
+        bestScore,
       };
   } catch(e) {
     throw(e);

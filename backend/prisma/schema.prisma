@@ -17,6 +17,8 @@ model Device {
 
   token String @unique
 
+  bestScore Int?
+
   exercises Exercise[]
 }
 
