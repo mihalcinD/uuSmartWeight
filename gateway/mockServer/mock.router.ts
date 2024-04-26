@@ -38,8 +38,8 @@ mockRouter.post("/postData", async (request: Request, response: Response) => {
     //responses
     switch (mockRes) {
         case 200:
-            
-            return response.status(200).json("OKok");
+                       
+            return response.status(200).json(request.body);
 
             break;
     
