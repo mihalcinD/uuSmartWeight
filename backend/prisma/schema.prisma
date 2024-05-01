@@ -50,7 +50,7 @@ model Series {
 
 model Point {
   id Int @id @default(autoincrement())
-  value Int
+  value Float
   createdAt DateTime
 
   seriesId  Int
