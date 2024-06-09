@@ -5,11 +5,11 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useMeContext } from '../context/MeContext.tsx';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { PageConfig, routesConfig } from '../routes/config.ts';
 import { useAppDispatch, useAppSelector } from '../store/hooks.ts';
 import { selectMode, toggleMode } from '../store/themeSlice.ts';
+import { selectMe } from '../store/meSlice.ts';
 
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -18,7 +18,7 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const mode = useAppSelector(selectMode);
-  const { me } = useMeContext();
+  const me = useAppSelector(selectMe);
   const menuItems = useMemo(() => Object.values(routesConfig).filter(route => route.showInMenu), []);
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {

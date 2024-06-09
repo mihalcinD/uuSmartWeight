@@ -2,10 +2,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ApiProvider } from './ApiContext.tsx';
 import { JSX } from 'react';
 import { SnackbarProvider } from 'notistack';
-import { MeProvider } from './MeContext.tsx';
 import { Provider } from 'react-redux';
 import { store } from '../store/store.ts';
-import { ThemeProvider } from './ThemeContext.tsx';
+import ThemeProvider from './ThemeProvider.tsx';
 type Props = {
   children: JSX.Element;
 };
@@ -17,7 +16,7 @@ const ProvidersContainer = ({ children }: Props) => {
         <SnackbarProvider>
           <ApiProvider>
             <CssBaseline />
-            <MeProvider>{children}</MeProvider>
+            {children}
           </ApiProvider>
         </SnackbarProvider>
       </ThemeProvider>

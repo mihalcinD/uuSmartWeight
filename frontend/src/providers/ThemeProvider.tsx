@@ -7,9 +7,11 @@ import { darkTheme, lightTheme } from '../config.ts';
 type Props = {
   children: JSX.Element | JSX.Element[];
 };
-export const ThemeProvider = ({ children }: Props) => {
+const ThemeProvider = ({ children }: Props) => {
   const themeMode = useAppSelector(selectMode);
   const theme = responsiveFontSizes(themeMode === 'light' ? lightTheme : darkTheme);
 
   return <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>;
 };
+
+export default ThemeProvider;
