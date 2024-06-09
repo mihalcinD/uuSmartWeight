@@ -10,7 +10,7 @@ const App = () => {
           {Object.values(routesConfig).map((config, index) => (
             <Route key={index} path={config.path} element={<config.component />} />
           ))}
-          <Route path={'*'} element={<Navigate to={'/'} />} />
+          <Route path={'*'} element={<Navigate to={'/'} replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

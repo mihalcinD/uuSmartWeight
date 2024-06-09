@@ -5,7 +5,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import MenuIcon from '@mui/icons-material/Menu';
-import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { createSearchParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PageConfig, routesConfig } from '../routes/config.ts';
 import { useAppDispatch, useAppSelector } from '../store/hooks.ts';
 import { selectMode, toggleMode } from '../store/themeSlice.ts';
@@ -49,7 +49,9 @@ const Header = () => {
           alignItems: 'center',
         }}>
         <Stack direction={'row'} alignItems={'center'} gap={1}>
-          <FitnessCenterIcon fontSize={'large'} />
+          <Link to={'/'} style={{ color: 'inherit', cursor: 'pointer' }}>
+            <FitnessCenterIcon fontSize={'large'} />
+          </Link>
         </Stack>
 
         <Stack direction={'row'} gap={1} alignItems={'center'}>
