@@ -21,7 +21,16 @@ const Dashboard = () => {
   return (
     <ContentWrapper>
       <GreetingTitle />
-      <Paper elevation={8} sx={{ borderRadius: 4, py: 5, px: 6, display: 'flex', gap: 7, flexDirection: 'column' }}>
+      <Paper
+        elevation={8}
+        sx={{
+          borderRadius: 4,
+          py: { xs: 3, md: 5 },
+          px: { xs: 3, md: 6 },
+          display: 'flex',
+          gap: 7,
+          flexDirection: 'column',
+        }}>
         <Stack direction={'row'} justifyContent={'space-between'}>
           <Typography variant={'h4'} component={'h2'} fontWeight={'bold'}>
             Today's summary
@@ -34,20 +43,21 @@ const Dashboard = () => {
             {isSmallScreen ? 'Statistics' : 'Show detailed statistics'}
           </Button>
         </Stack>
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={20}>
+        <Stack direction={{ xs: 'column', lg: 'row' }} spacing={6}>
           <Stack spacing={7}>
             <Stack direction={'row'} spacing={5}>
               <SummaryItem label={'Exercises'} value={'4'} />
               <SummaryItem label={'Total sets'} value={'12'} />
               <SummaryItem label={'Total time'} value={'00:43:16'} />
             </Stack>
-            <Stack direction={'row'} spacing={5}>
-              <SummaryItem label={'Average sets per excercise'} value={'3'} />
-              <SummaryItem label={'Average time per excercise'} value={'10:48'} />
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
+              <SummaryItem label={'Average sets per exercise'} value={'3'} />
+              <SummaryItem label={'Average time per exercise'} value={'10:48'} />
               <SummaryItem label={'Average time per set'} value={'03:36'} />
             </Stack>
           </Stack>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flex: 1 }}>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', lg: 'flex-end' }, flex: 1 }}>
             <Stack spacing={1} alignItems={'center'}>
               <Gauge
                 width={250}
