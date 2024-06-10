@@ -23,6 +23,8 @@ function main() {
 
     app.use("/device", deviceRouter);
 
+    app.use("/series", seriesRouter);
+
     app.listen(process.env.PORT, () => console.log(`Express app running on port ${process.env.PORT}!`));
 }
 
