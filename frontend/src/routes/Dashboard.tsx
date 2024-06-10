@@ -7,12 +7,13 @@ import SummaryItem from '../components/SummaryItem.tsx';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { useGetDeviceDataQuery } from '../store/deviceDataSlice.ts';
 import { formatTime } from '../helpers/time.ts';
+import dayjs from 'dayjs';
 
 const Dashboard = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { data } = useGetDeviceDataQuery(new Date().toISOString().slice(0, 10));
+  const { data } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'));
 
   const navigateWithParams = ({ path, search }: PageConfig) => {
     navigate({

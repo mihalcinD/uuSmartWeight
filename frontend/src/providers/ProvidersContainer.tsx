@@ -1,10 +1,11 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import { ApiProvider } from './ApiContext.tsx';
 import { JSX } from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { store } from '../store/store.ts';
 import ThemeProvider from './ThemeProvider.tsx';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 type Props = {
   children: JSX.Element;
 };
@@ -13,12 +14,12 @@ const ProvidersContainer = ({ children }: Props) => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <SnackbarProvider>
-          <ApiProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <SnackbarProvider>
             <CssBaseline />
             {children}
-          </ApiProvider>
-        </SnackbarProvider>
+          </SnackbarProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </Provider>
   );

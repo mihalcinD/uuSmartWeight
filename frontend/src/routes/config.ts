@@ -3,6 +3,7 @@ import { JSX } from 'react';
 import Statistics from './Statistics.tsx';
 import SetDetail from './SetDetail.tsx';
 import Devices from './Devices.tsx';
+import dayjs from 'dayjs';
 
 export type PageConfig = {
   label: string;
@@ -23,7 +24,7 @@ export const routesConfig: Record<string, PageConfig> = {
     label: 'Statistics',
     path: '/statistics',
     component: Statistics,
-    search: { date: new Date().toISOString().slice(0, 10) },
+    search: { date: dayjs().format('YYYY-MM-DD') },
     showInMenu: true,
   },
   SET_DETAIL: {

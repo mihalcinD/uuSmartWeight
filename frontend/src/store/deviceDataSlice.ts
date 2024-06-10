@@ -7,8 +7,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       query: date => `deviceData/?&date=${date}`,
       providesTags: (_result, _error, arg) => [{ type: 'DeviceData', id: arg }],
       transformResponse: (responseData: DeviceDataResponse) => {
-        //array destructuring just for json server, will be removed
-        //@ts-expect-error
+        //@ts-expect-error array destructuring just for json server, will be removed
         const response = responseData[0];
         return {
           ...response,
