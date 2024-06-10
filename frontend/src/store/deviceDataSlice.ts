@@ -20,4 +20,4 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetDeviceDataQuery } = extendedApiSlice;
+export const { useGetDeviceDataQuery, useLazyGetDeviceDataQuery } = extendedApiSlice;
