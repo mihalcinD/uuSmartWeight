@@ -5,11 +5,14 @@ import { createSearchParams, useNavigate } from 'react-router-dom';
 import { PageConfig, routesConfig } from './config.ts';
 import SummaryItem from '../components/SummaryItem.tsx';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
+import { useGetDeviceDataQuery } from '../store/deviceDataSlice.ts';
+import { formatTime } from '../helpers/time.ts';
 
 const Dashboard = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
+  const { data } = useGetDeviceDataQuery(new Date().toISOString().slice(0, 10));
 
   const navigateWithParams = ({ path, search }: PageConfig) => {
     navigate({
@@ -46,14 +49,14 @@ const Dashboard = () => {
         <Stack direction={{ xs: 'column', lg: 'row' }} spacing={6}>
           <Stack spacing={7}>
             <Stack direction={'row'} spacing={5}>
-              <SummaryItem label={'Exercises'} value={'4'} />
-              <SummaryItem label={'Total sets'} value={'12'} />
-              <SummaryItem label={'Total time'} value={'00:43:16'} />
+              <SummaryItem label={'Exercises'} value={data?.numberOfExercises} />
+              <SummaryItem label={'Total sets'} value={data?.series.length} />
+              <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} />
             </Stack>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
-              <SummaryItem label={'Average sets per exercise'} value={'3'} />
-              <SummaryItem label={'Average time per exercise'} value={'10:48'} />
-              <SummaryItem label={'Average time per set'} value={'03:36'} />
+              <SummaryItem label={'Average sets per exercise'} value={data?.averageSetsPerExercise} />
+              <SummaryItem label={'Average time per exercise'} value={formatTime(data?.averageTimePerExercise)} />
+              <SummaryItem label={'Average time per set'} value={formatTime(data?.averageTimePerSet)} />
             </Stack>
           </Stack>
           <Box
@@ -62,9 +65,9 @@ const Dashboard = () => {
               <Gauge
                 width={250}
                 height={250}
-                value={113}
+                value={data?.points || 0}
                 valueMin={0}
-                valueMax={161}
+                valueMax={data?.bestScore || 0}
                 sx={{
                   [`& .${gaugeClasses.valueText}`]: {
                     fontSize: 32,

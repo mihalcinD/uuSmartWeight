@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 
 type Props = {
   label: string;
-  value: string;
+  value: string | number | undefined;
 };
 const SummaryItem = ({ label, value }: Props) => {
   return (
@@ -11,7 +11,7 @@ const SummaryItem = ({ label, value }: Props) => {
         {label}
       </Typography>
       <Typography variant={'h2'} component={'h3'} fontWeight={'bolder'}>
-        {value}
+        {value || 0}
       </Typography>
     </Stack>
   );

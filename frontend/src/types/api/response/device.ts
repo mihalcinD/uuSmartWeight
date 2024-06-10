@@ -13,4 +13,10 @@ type SetResponse = {
   endedAt: string;
 };
 
-export type { DeviceDataResponse, SetResponse };
+type DeviceDataExtended = DeviceDataResponse & {
+  averageSetsPerExercise: number;
+  averageTimePerSet: number;
+  averageTimePerExercise: number;
+};
+
+export type { DeviceDataResponse, SetResponse, DeviceDataExtended };
