@@ -8,12 +8,13 @@ import BestScoreBox from '../components/BestScoreBox.tsx';
 import { useGetDeviceDataQuery } from '../store/deviceDataSlice.ts';
 import SummaryItem from '../components/SummaryItem.tsx';
 import { formatTime } from '../helpers/time.ts';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 const Devices = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const date = useMemo(() => searchParams.get('date'), [searchParams]);
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(date));
-  const { data, refetch } = useGetDeviceDataQuery(date ?? '');
+  const { data, isLoading } = useGetDeviceDataQuery(date ?? skipToken);
 
   const onDateChange = (date: Dayjs | null) => {
     if (!date) return;
@@ -24,7 +25,6 @@ const Devices = () => {
     if (date) {
       setDateValue(dayjs(date));
     }
-    refetch();
   }, [date]);
 
   return (
@@ -48,7 +48,7 @@ const Devices = () => {
           </Stack>
         </Stack>
         <Stack minWidth={300} gap={5}>
-          <BestScoreBox score={data?.points} bestScore={data?.bestScore} />
+          <BestScoreBox score={data?.points} bestScore={data?.bestScore} isLoading={isLoading} />
           <Stack spacing={1}>
             <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} />
             <Stack direction={'row'} spacing={5}>

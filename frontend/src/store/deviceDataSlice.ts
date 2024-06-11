@@ -8,7 +8,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       providesTags: (_result, _error, arg) => [{ type: 'DeviceData', id: arg }],
       transformResponse: (responseData: DeviceDataResponse) => {
         //@ts-expect-error array destructuring just for json server, will be removed
+        if (responseData.length === 0) {
+          return undefined;
+        }
+        //@ts-expect-error array destructuring just for json server, will be removed
         const response = responseData[0];
+
         return {
           ...response,
           averageSetsPerExercise: response.series.length / response.numberOfExercises,
