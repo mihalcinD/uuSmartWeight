@@ -3,6 +3,6 @@ import { config } from '../config.ts';
 
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: config.domain }),
-  tagTypes: ['DeviceData'],
+  tagTypes: ['DeviceData', 'SetDetail'],
   endpoints: () => ({}),
 });

@@ -8,12 +8,16 @@ import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 import { useGetDeviceDataQuery } from '../store/deviceDataSlice.ts';
 import { formatTime } from '../helpers/time.ts';
 import dayjs from 'dayjs';
+import { useMemo } from 'react';
 
 const Dashboard = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { data, isLoading } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'));
+  const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'), {
+    pollingInterval: 30000,
+  });
+  const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
 
   const navigateWithParams = ({ path, search }: PageConfig) => {
     navigate({
@@ -73,7 +77,13 @@ const Dashboard = () => {
             </Stack>
           </Stack>
           <Box
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', lg: 'flex-end' }, flex: 1 }}>
+            sx={{
+              display: 'flex',
+              alignItems: { xs: 'center', lg: 'flex-end' },
+              flexDirection: 'column',
+              flex: 1,
+              gap: 3,
+            }}>
             <Stack spacing={1} alignItems={'center'}>
               <Gauge
                 width={250}
@@ -91,6 +101,11 @@ const Dashboard = () => {
               />
               <Typography variant={'h4'}>Score</Typography>
             </Stack>
+            {fulfilledTimeStamp && (
+              <Typography sx={{ textAlign: 'right', color: 'text.secondary', flex: 1 }}>
+                Updated at: {lastUpdate}
+              </Typography>
+            )}
           </Box>
         </Stack>
       </Paper>
