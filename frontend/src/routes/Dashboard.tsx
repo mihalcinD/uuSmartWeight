@@ -103,7 +103,7 @@ const Dashboard = () => {
             </Stack>
             {fulfilledTimeStamp && (
               <Typography sx={{ textAlign: 'right', color: 'text.secondary', flex: 1 }}>
-                Updated at: {lastUpdate}
+                Updated at {lastUpdate}
               </Typography>
             )}
           </Box>

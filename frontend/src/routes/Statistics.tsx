@@ -9,6 +9,7 @@ import { useGetDeviceDataQuery } from '../store/deviceDataSlice.ts';
 import SummaryItem from '../components/SummaryItem.tsx';
 import { formatTime } from '../helpers/time.ts';
 import { skipToken } from '@reduxjs/toolkit/query';
+import SeriesGraph from '../components/SeriesGraph.tsx';
 
 const Devices = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,7 +17,6 @@ const Devices = () => {
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(date));
   const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(date ?? skipToken, { pollingInterval: 30000 });
   const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
-
   const onDateChange = (date: Dayjs | null) => {
     if (!date) return;
     setSearchParams({ date: date.format('YYYY-MM-DD') });
@@ -40,13 +40,14 @@ const Devices = () => {
           flexDirection: { xs: 'column', lg: 'row' },
           gap: 4,
         }}>
-        <Stack flex={1}>
+        <Stack flex={1} gap={5}>
           <Stack flexDirection={'row'} gap={10} justifyContent={'space-between'}>
             <Typography variant={'h3'} component={'h1'} fontWeight={'bold'}>
               Statistics
             </Typography>
             <DatePicker label="Select a date" value={dateValue} onChange={onDateChange} />
           </Stack>
+          <SeriesGraph isLoading={isLoading} data={data?.series} />
         </Stack>
         <Stack minWidth={300} gap={5}>
           <BestScoreBox score={data?.points} bestScore={data?.bestScore} isLoading={isLoading} />
@@ -76,7 +77,7 @@ const Devices = () => {
             />
           </Stack>
           {fulfilledTimeStamp && (
-            <Typography sx={{ textAlign: 'right', color: 'text.secondary' }}>Updated at: {lastUpdate}</Typography>
+            <Typography sx={{ textAlign: 'right', color: 'text.secondary' }}>Updated at {lastUpdate}</Typography>
           )}
         </Stack>
       </Paper>
