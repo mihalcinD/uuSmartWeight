@@ -50,14 +50,29 @@ const Devices = () => {
         <Stack minWidth={300} gap={5}>
           <BestScoreBox score={data?.points} bestScore={data?.bestScore} isLoading={isLoading} />
           <Stack spacing={1}>
-            <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} />
+            <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} isLoading={isLoading} />
             <Stack direction={'row'} spacing={5}>
-              <SummaryItem label={'Exercises'} value={data?.numberOfExercises} small />
-              <SummaryItem label={'Total sets'} value={data?.series.length} small />
+              <SummaryItem label={'Exercises'} value={data?.numberOfExercises} small isLoading={isLoading} />
+              <SummaryItem label={'Total sets'} value={data?.series.length} small isLoading={isLoading} />
             </Stack>
-            <SummaryItem label={'Average sets per exercise'} value={data?.averageSetsPerExercise} small />
-            <SummaryItem label={'Average time per exercise'} value={formatTime(data?.averageTimePerExercise)} small />
-            <SummaryItem label={'Average time per set'} value={formatTime(data?.averageTimePerSet)} small />
+            <SummaryItem
+              label={'Average sets per exercise'}
+              value={data?.averageSetsPerExercise}
+              small
+              isLoading={isLoading}
+            />
+            <SummaryItem
+              label={'Average time per exercise'}
+              value={formatTime(data?.averageTimePerExercise)}
+              small
+              isLoading={isLoading}
+            />
+            <SummaryItem
+              label={'Average time per set'}
+              value={formatTime(data?.averageTimePerSet)}
+              small
+              isLoading={isLoading}
+            />
           </Stack>
         </Stack>
       </Paper>

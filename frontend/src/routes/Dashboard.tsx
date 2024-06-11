@@ -13,7 +13,7 @@ const Dashboard = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { data } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'));
+  const { data, isLoading } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'));
 
   const navigateWithParams = ({ path, search }: PageConfig) => {
     navigate({
@@ -50,14 +50,26 @@ const Dashboard = () => {
         <Stack direction={{ xs: 'column', lg: 'row' }} spacing={6}>
           <Stack spacing={7}>
             <Stack direction={'row'} spacing={5}>
-              <SummaryItem label={'Exercises'} value={data?.numberOfExercises} />
-              <SummaryItem label={'Total sets'} value={data?.series.length} />
-              <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} />
+              <SummaryItem label={'Exercises'} value={data?.numberOfExercises} isLoading={isLoading} />
+              <SummaryItem label={'Total sets'} value={data?.series.length} isLoading={isLoading} />
+              <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} isLoading={isLoading} />
             </Stack>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>
-              <SummaryItem label={'Average sets per exercise'} value={data?.averageSetsPerExercise} />
-              <SummaryItem label={'Average time per exercise'} value={formatTime(data?.averageTimePerExercise)} />
-              <SummaryItem label={'Average time per set'} value={formatTime(data?.averageTimePerSet)} />
+              <SummaryItem
+                label={'Average sets per exercise'}
+                value={data?.averageSetsPerExercise}
+                isLoading={isLoading}
+              />
+              <SummaryItem
+                label={'Average time per exercise'}
+                value={formatTime(data?.averageTimePerExercise)}
+                isLoading={isLoading}
+              />
+              <SummaryItem
+                label={'Average time per set'}
+                value={formatTime(data?.averageTimePerSet)}
+                isLoading={isLoading}
+              />
             </Stack>
           </Stack>
           <Box
