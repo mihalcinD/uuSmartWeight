@@ -7,7 +7,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 
 const SetDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useGetSetDetailQuery(id ? Number(id) : skipToken);
+  const { isLoading } = useGetSetDetailQuery(id ? Number(id) : skipToken);
   const navigate = useNavigate();
   const theme = useTheme();
 
