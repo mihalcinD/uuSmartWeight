@@ -4,7 +4,9 @@ import * as dotenv from "dotenv";
 
 import { exerciseRouter } from "./exercise/exercise.router";
 import { seriesRouter } from "./series/series.router";
-import { repetitionRouter } from "./repetition/repetition.router";
+import { dataRouter } from "./data/data.router";
+import { deviceRouter } from "./device/device.router";
+import * as expressValidator from "express-validator";
 
 dotenv.config();
 
@@ -17,9 +19,11 @@ function main() {
     app.use(cors({origin:true,credentials: true}));
     app.use(express.json());
 
-    app.use("/exercise", exerciseRouter);
+    app.use("/data", dataRouter);
+
+    app.use("/device", deviceRouter);
+
     app.use("/series", seriesRouter);
-    app.use("/repetition", repetitionRouter);
 
     app.listen(process.env.PORT, () => console.log(`Express app running on port ${process.env.PORT}!`));
 }

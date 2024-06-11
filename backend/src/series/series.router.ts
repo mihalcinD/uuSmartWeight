@@ -1,18 +1,26 @@
 import type { Request, Response } from "express";
 import * as express from "express";
-import { body, validationResult } from "express-validator";
 
 import * as SeriesService from "./series.service";
-import { request } from "http";
 
 export const seriesRouter = express.Router();
 
-// Get all repetitions
-seriesRouter.get("/", async (request: Request, response: Response) => {
-    try {
-        const series = await SeriesService.listSeries();
-        return response.status(200).json(series);
-    } catch (e: any) {
-        return response.status(500).json(e.message);
+
+seriesRouter.get("/detail",
+    async (req: Request, res: Response) => {
+        try {
+            const seriesID = Number(req.query.id);
+
+            if (isNaN(seriesID)) {
+                return res.status(400).send("invalid query data");
+            }
+
+            const seriesDetail = await SeriesService.getSeriesDetail(seriesID);
+
+            return res.status(200).json(seriesDetail);
+        } catch (e: any) {
+            console.error(e);
+            return res.status(500).json(e.message).send();
+        }
     }
-})
+);
