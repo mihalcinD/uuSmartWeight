@@ -14,7 +14,8 @@ const Devices = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const date = useMemo(() => searchParams.get('date'), [searchParams]);
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(date));
-  const { data, isLoading } = useGetDeviceDataQuery(date ?? skipToken);
+  const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(date ?? skipToken, { pollingInterval: 30000 });
+  const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
 
   const onDateChange = (date: Dayjs | null) => {
     if (!date) return;
@@ -74,6 +75,9 @@ const Devices = () => {
               isLoading={isLoading}
             />
           </Stack>
+          {fulfilledTimeStamp && (
+            <Typography sx={{ textAlign: 'right', color: 'text.secondary' }}>Updated at: {lastUpdate}</Typography>
+          )}
         </Stack>
       </Paper>
     </ContentWrapper>
