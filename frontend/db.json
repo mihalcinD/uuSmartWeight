@@ -1,0 +1,104 @@
+{
+"device": [
+  {
+    "date": "2024-06-08",
+    "numberOfExercises": 2,
+    "series": [{
+      "id": 1,
+      "numberOfRepetitions": 12,
+      "createdAt": "2019-01-01T00:00:00.000Z",
+      "endedAt": "2019-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 1,
+      "numberOfRepetitions": 8,
+      "createdAt": "2019-01-01T00:00:00.000Z",
+      "endedAt": "2019-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 1,
+      "numberOfRepetitions": 6,
+      "createdAt": "2019-01-01T00:00:00.000Z",
+      "endedAt": "2019-01-01T00:00:00.000Z"
+    }],
+    "totalTime": 3600568,
+    "points": 63,
+    "bestScore": 89
+  },
+  {
+    "date": "2024-06-12",
+    "numberOfExercises": 4,
+    "series": [{
+      "id": 1,
+      "numberOfRepetitions": 12,
+      "createdAt": "2019-01-01T00:00:00.000Z",
+      "endedAt": "2019-01-01T00:00:00.000Z"
+    },
+      {
+        "id": 1,
+        "numberOfRepetitions": 8,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },
+      {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },  {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },  {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },  {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      },  {
+        "id": 1,
+        "numberOfRepetitions": 6,
+        "createdAt": "2019-01-01T00:00:00.000Z",
+        "endedAt": "2019-01-01T00:00:00.000Z"
+      }],
+    "totalTime": 3700568,
+    "points": 74,
+    "bestScore": 89
+  }
+]
+}

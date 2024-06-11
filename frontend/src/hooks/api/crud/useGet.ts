@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { CacheAxiosResponse, CacheProperties } from 'axios-cache-interceptor';
 import { ResponseError } from '../../../types/api/Api.ts';
-import { useApiContext } from '../../../context/ApiContext.tsx';
+import { useApiContext } from '../../../providers/ApiContext.tsx';
 import { useSnackbar } from 'notistack';
 
 type Props = {

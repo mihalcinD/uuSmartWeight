@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import ContextsContainer from './context/ContextsContainer.tsx';
+import ProvidersContainer from './providers/ProvidersContainer.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ContextsContainer>
+    <ProvidersContainer>
       <App />
-    </ContextsContainer>
+    </ProvidersContainer>
   </React.StrictMode>,
 );

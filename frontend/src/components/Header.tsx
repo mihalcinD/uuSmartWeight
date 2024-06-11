@@ -2,21 +2,23 @@ import { AppBar, Box, Button, IconButton, Menu, MenuItem, Stack, Toolbar, Typogr
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { useState, MouseEvent, useMemo } from 'react';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import { useThemeContext } from '../context/ThemeContext.tsx';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useMeContext } from '../context/MeContext.tsx';
-import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { createSearchParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { PageConfig, routesConfig } from '../routes/config.ts';
+import { useAppDispatch, useAppSelector } from '../store/hooks.ts';
+import { selectMode, toggleMode } from '../store/themeSlice.ts';
+import { selectMe } from '../store/meSlice.ts';
 
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { toggleMode, mode } = useThemeContext();
-  const { me } = useMeContext();
+  const dispatch = useAppDispatch();
+  const mode = useAppSelector(selectMode);
+  const me = useAppSelector(selectMe);
   const menuItems = useMemo(() => Object.values(routesConfig).filter(route => route.showInMenu), []);
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
@@ -47,7 +49,9 @@ const Header = () => {
           alignItems: 'center',
         }}>
         <Stack direction={'row'} alignItems={'center'} gap={1}>
-          <FitnessCenterIcon fontSize={'large'} />
+          <Link to={'/'} style={{ color: 'inherit', cursor: 'pointer' }}>
+            <FitnessCenterIcon fontSize={'large'} />
+          </Link>
         </Stack>
 
         <Stack direction={'row'} gap={1} alignItems={'center'}>
@@ -102,7 +106,7 @@ const Header = () => {
               </Button>
             ))}
           </Stack>
-          <IconButton size="large" onClick={toggleMode} color="inherit">
+          <IconButton size="large" onClick={() => dispatch(toggleMode())} color="inherit">
             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
           <IconButton

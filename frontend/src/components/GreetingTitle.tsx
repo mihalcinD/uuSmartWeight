@@ -1,8 +1,9 @@
 import { Typography } from '@mui/material';
-import { useMeContext } from '../context/MeContext.tsx';
+import { useAppSelector } from '../store/hooks.ts';
+import { selectMe } from '../store/meSlice.ts';
 
 const GreetingTitle = () => {
-  const { me } = useMeContext();
+  const me = useAppSelector(selectMe);
   const getGreeting = () => {
     const date = new Date();
     const hours = date.getHours();
