@@ -4,9 +4,11 @@ import { DeviceDataExtended, DeviceDataResponse } from '../types/api/response/de
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getDeviceData: builder.query<DeviceDataExtended, string>({
-      query: date => `deviceData/?date=${date}&id=1&detailed=1`,
+      //TODO change path to /device/detail when api is ready
+      query: date => `device?date=${date}&id=1&detailed=1`,
       providesTags: (_result, _error, arg) => [{ type: 'DeviceData', id: arg }],
       transformResponse: (responseData: DeviceDataResponse) => {
+        //TODO remove this when api is ready
         //@ts-expect-error array destructuring just for json server, will be removed
         if (responseData.length === 0) {
           return undefined;
