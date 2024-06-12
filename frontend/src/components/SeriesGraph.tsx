@@ -12,13 +12,37 @@ const SeriesGraph = ({ isLoading = true, data }: Props) => {
     id: item.id,
   }));
 
+  const _data = [
+    { label: 'Exercise 1', data: [10, 20], id: 1 },
+    { label: 'Exercise 2', data: [20, 3], id: 2 },
+  ];
+
+  const series = [
+    {
+      label: 'Exercise 1',
+      data: [2423, 2210, 764, 1879],
+    },
+    {
+      label: 'Exercise 2',
+      data: [2423, 2210, 764, 1879],
+    },
+    {
+      label: 'Exercise 3',
+      data: [2423, 2210, 764],
+    },
+    {
+      label: 'Exercise 4',
+      data: [2423, 2210, 764, 1879],
+    },
+  ];
+
   return isLoading ? (
     <Skeleton variant={'rounded'} height={500} />
   ) : convertedData && convertedData.length > 0 ? (
     <BarChart
-      series={convertedData}
+      series={series}
       height={500}
-      xAxis={[{ data: convertedData.map(item => item.label), scaleType: 'band' }]}
+      xAxis={[{ data: _data.map(item => item.label), scaleType: 'band' }]}
       slotProps={{ legend: { hidden: true } }}
       colors={[theme.palette.primary.main, theme.palette.primary.light]}
       onItemClick={(_event, item) => {
