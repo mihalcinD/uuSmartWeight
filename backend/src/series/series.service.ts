@@ -93,7 +93,7 @@ export async function endSeries(deviceId: number, date: Date): Promise<void> {
   });
   //
 
-  const numberOfRepetitions = countPeaks(activeSeries.points.map(point => point.value));
+  const numberOfRepetitions = activeSeries.points ? countPeaks(activeSeries.points.map(point => point.value)) : 0;
 
   // End all unfinished Series (TODO: only one ?)
   await db.series.updateMany({
