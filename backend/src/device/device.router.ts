@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as express from "express";
 
 import * as ExerciseService from "./device.service";
+import { parse } from "path";
 
 export const deviceRouter = express.Router();
 

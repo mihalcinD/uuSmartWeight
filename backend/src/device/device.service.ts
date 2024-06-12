@@ -26,6 +26,7 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
             id,
           },
           select: {
+            bestScore: true,
             exercises: {
               where: {
                 createdAt: {
