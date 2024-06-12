@@ -4,10 +4,12 @@ import no_data from '../assets/no_data.png';
 import { ExerciseResponse } from '../types/api/response/device.ts';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type Props = { isLoading?: boolean; data: ExerciseResponse[] | undefined };
 const SeriesGraph = ({ isLoading = true, data }: Props) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const sets = useMemo(() => data?.flatMap(item => item.series.flatMap(set => set)), [data]);
   const chartSeries = [
     {
@@ -17,7 +19,10 @@ const SeriesGraph = ({ isLoading = true, data }: Props) => {
   ];
 
   const onBarPress = (_event: React.MouseEvent<SVGElement, MouseEvent>, item: BarItemIdentifier) => {
-    console.log(item);
+    const set = sets?.[item.dataIndex];
+    if (set) {
+      navigate(`/set/${set.id}`);
+    }
   };
 
   return isLoading ? (
@@ -29,6 +34,7 @@ const SeriesGraph = ({ isLoading = true, data }: Props) => {
       xAxis={[{ scaleType: 'band', data: sets.map(set => dayjs(set.createdAt).format('HH:MM:ss')), label: 'Time' }]}
       yAxis={[{ label: 'Repetitions', tickMinStep: 1 }]}
       slotProps={{ legend: { hidden: true } }}
+      tooltip={{ trigger: 'axis' }}
       colors={[theme.palette.primary.main, theme.palette.primary.light]}
       onItemClick={onBarPress}
     />
