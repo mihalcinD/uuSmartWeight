@@ -11,6 +11,7 @@ interface SeriesDetail {
   numberOfRepetitons: number,
   points: GetSeriesDetailPoint[],
   createdAt: Date
+  endedAt: Date
 }
 
 export async function getSeriesDetail(seriesID: number): Promise<SeriesDetail> {
@@ -24,6 +25,7 @@ export async function getSeriesDetail(seriesID: number): Promise<SeriesDetail> {
         },
         select: {
           createdAt: true,
+          endedAt: true,
           numberOfRepetitions: true,
           points: true,
         }
