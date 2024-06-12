@@ -1,4 +1,4 @@
-import { Button, Paper, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Button, Chip, Paper, Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ContentWrapper from '../components/ContentWrapper.tsx';
 import { useGetSetDetailQuery } from '../store/setsSlice.ts';
@@ -7,7 +7,10 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { ChartsReferenceLine } from '@mui/x-charts';
-
+import RepeatIcon from '@mui/icons-material/Repeat';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 const SetDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { isLoading, data } = useGetSetDetailQuery(id ? Number(id) : skipToken);
@@ -18,12 +21,12 @@ const SetDetail = () => {
     const returnData: { xData: string[]; yData: number[] } = { xData: [], yData: [] };
     if (!data) return returnData;
 
-    const firstTime = dayjs(data[0].createdAt);
-    const maxValue = data.reduce((max, current) => {
+    const firstTime = dayjs(data.points[0].createdAt);
+    const maxValue = data.points.reduce((max, current) => {
       return current.value > max ? current.value : max;
-    }, data[0].value);
+    }, data.points[0].value);
 
-    data.forEach(item => {
+    data.points.forEach(item => {
       const secondsDiff = dayjs(item.createdAt).diff(firstTime) / 1000;
       returnData.xData.push(`${secondsDiff}s`);
       returnData.yData.push((item.value / maxValue) * 100);
@@ -47,6 +50,32 @@ const SetDetail = () => {
         <Typography variant={'h3'} component={'h1'} fontWeight={'bold'}>
           Set detail
         </Typography>
+        <Stack direction={'row'} gap={2}>
+          <Chip
+            icon={<RepeatIcon />}
+            label={data?.numberOfRepetitions + ' reps'}
+            size={'medium'}
+            sx={{ fontSize: 20, px: 3, py: 3 }}
+          />
+          <Chip
+            icon={<AccessTimeIcon />}
+            label={dayjs(data?.endedAt).diff(data?.createdAt, 'second') + 's'}
+            size={'medium'}
+            sx={{ fontSize: 20, px: 3, py: 3 }}
+          />
+          <Chip
+            icon={<PlayCircleFilledWhiteIcon />}
+            label={dayjs(data?.createdAt).format('HH:mm:ss DD/MM/YYYY')}
+            size={'medium'}
+            sx={{ fontSize: 20, px: 3, py: 3 }}
+          />
+          <Chip
+            icon={<StopCircleIcon />}
+            label={dayjs(data?.endedAt).format('HH:mm:ss DD/MM/YYYY')}
+            size={'medium'}
+            sx={{ fontSize: 20, px: 3, py: 3 }}
+          />
+        </Stack>
         {isLoading ? (
           <Skeleton variant={'rounded'} height={400} />
         ) : data ? (

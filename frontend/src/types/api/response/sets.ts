@@ -1,8 +1,10 @@
 type SetDetail = {
-  value: number;
+  points: { value: number; createdAt: string }[];
+  numberOfRepetitions: number;
   createdAt: string;
+  endedAt: string;
 };
 
-type SetDetailResponse = SetDetail[];
+type SetDetailResponse = SetDetail;
 
 export type { SetDetail, SetDetailResponse };
