@@ -78,7 +78,7 @@ export async function createSeries(deviceID: number, date: Date): Promise<number
 
 export async function endSeries(deviceId: number, date: Date): Promise<void> {
   // Get active series
-  const activeSeries = await db.series.findFirstOrThrow({
+  const activeSeries: any = await db.series.findFirstOrThrow({
     where: {
         exercise: { deviceId },
         endedAt: null,
