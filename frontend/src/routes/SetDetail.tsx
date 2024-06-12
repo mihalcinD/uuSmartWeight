@@ -50,7 +50,7 @@ const SetDetail = () => {
         <Typography variant={'h3'} component={'h1'} fontWeight={'bold'}>
           Set detail
         </Typography>
-        <Stack direction={'row'} gap={2}>
+        <Stack direction={'row'} gap={2} flexWrap={'wrap'}>
           <Chip
             icon={<RepeatIcon />}
             label={data?.numberOfRepetitions + ' reps'}
