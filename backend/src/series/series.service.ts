@@ -1,5 +1,6 @@
 import { db } from "../utils/db.server";
 import { getActiveExerciseOrCreateNew } from "../exercise/exercise.service";
+import { countPeaks } from "../utils/count";
 
 interface GetSeriesDetailPoint {
   value: number
@@ -76,6 +77,24 @@ export async function createSeries(deviceID: number, date: Date): Promise<number
 }
 
 export async function endSeries(deviceId: number, date: Date): Promise<void> {
+  // Get active series
+  const activeSeries = await db.series.findFirstOrThrow({
+    where: {
+        exercise: { deviceId },
+        endedAt: null,
+    },
+    select: {
+      points: {
+        select: {
+          value: true,
+        }
+      }
+    }
+  });
+  //
+
+  const numberOfRepetitions = countPeaks(activeSeries.points.map(point => point.value));
+
   // End all unfinished Series (TODO: only one ?)
   await db.series.updateMany({
     where: {
@@ -84,6 +103,8 @@ export async function endSeries(deviceId: number, date: Date): Promise<void> {
     },
     data: {
       endedAt: date,
+      numberOfRepetitions,
     }
   });
+  //
 }

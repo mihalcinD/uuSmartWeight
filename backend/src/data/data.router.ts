@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import * as express from "express";
-import { check, checkSchema, header } from "express-validator";
+import { check  } from "express-validator";
 
 import { validate } from "../utils/validator";
 import * as DataService from "./data.service";

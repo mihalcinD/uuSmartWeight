@@ -122,8 +122,8 @@ export async function createBulk(bulkData: Data[]): Promise<CreateBulkResponse> 
                     break;
                 }
                 case EventType.REP_COUNT: {
-                    await updateRepCount(activeDeviceID, curDate, data.value);
                     break;
+                    await updateRepCount(activeDeviceID, curDate, data.value);
                 }
                 case EventType.SERIES_END: {
                     await endSeries(activeDeviceID, curDate);
