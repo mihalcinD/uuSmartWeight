@@ -1,53 +1,36 @@
-import { BarChart } from '@mui/x-charts';
+import { BarChart, BarItemIdentifier } from '@mui/x-charts';
 import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import no_data from '../assets/no_data.png';
 import { ExerciseResponse } from '../types/api/response/device.ts';
+import dayjs from 'dayjs';
+import { useMemo } from 'react';
 
 type Props = { isLoading?: boolean; data: ExerciseResponse[] | undefined };
 const SeriesGraph = ({ isLoading = true, data }: Props) => {
   const theme = useTheme();
-  const convertedData = data?.map(item => ({
-    label: 'Exercise ' + item.id,
-    data: item.series.map(set => set.numberOfRepetitions),
-    id: item.id,
-  }));
-
-  const _data = [
-    { label: 'Exercise 1', data: [10, 20], id: 1 },
-    { label: 'Exercise 2', data: [20, 3], id: 2 },
-  ];
-
-  const series = [
+  const sets = useMemo(() => data?.flatMap(item => item.series.flatMap(set => set)), [data]);
+  const chartSeries = [
     {
-      label: 'Exercise 1',
-      data: [2423, 2210, 764, 1879],
-    },
-    {
-      label: 'Exercise 2',
-      data: [2423, 2210, 764, 1879],
-    },
-    {
-      label: 'Exercise 3',
-      data: [2423, 2210, 764],
-    },
-    {
-      label: 'Exercise 4',
-      data: [2423, 2210, 764, 1879],
+      data: sets?.map(item => item.numberOfRepetitions),
+      label: 'Repetitions',
     },
   ];
+
+  const onBarPress = (_event: React.MouseEvent<SVGElement, MouseEvent>, item: BarItemIdentifier) => {
+    console.log(item);
+  };
 
   return isLoading ? (
     <Skeleton variant={'rounded'} height={500} />
-  ) : convertedData && convertedData.length > 0 ? (
+  ) : sets && sets.length > 0 ? (
     <BarChart
-      series={series}
+      series={chartSeries}
       height={500}
-      xAxis={[{ data: _data.map(item => item.label), scaleType: 'band' }]}
+      xAxis={[{ scaleType: 'band', data: sets.map(set => dayjs(set.createdAt).format('HH:MM:ss')), label: 'Time' }]}
+      yAxis={[{ label: 'Repetitions', tickMinStep: 1 }]}
       slotProps={{ legend: { hidden: true } }}
       colors={[theme.palette.primary.main, theme.palette.primary.light]}
-      onItemClick={(_event, item) => {
-        console.log(item);
-      }}
+      onItemClick={onBarPress}
     />
   ) : (
     <Stack flex={1} justifyContent={'center'} alignItems={'center'}>

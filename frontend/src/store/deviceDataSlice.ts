@@ -8,12 +8,14 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       providesTags: (_result, _error, arg) => [{ type: 'DeviceData', id: arg }],
       transformResponse: (responseData: DeviceDataResponse) => {
         const sets = responseData.exercises.reduce((acc, exercise) => acc + exercise.series.length, 0);
+        const exercises = responseData.exercises.length;
         return {
           ...responseData,
-          averageSetsPerExercise: Math.round(sets / responseData.numberOfExercises),
+          averageSetsPerExercise: Math.ceil(sets / exercises),
           averageTimePerSet: responseData.totalTime / sets,
-          averageTimePerExercise: responseData.totalTime / responseData.numberOfExercises,
+          averageTimePerExercise: responseData.totalTime / exercises,
           numberOfSets: sets,
+          numberOfExercises: exercises,
         };
       },
     }),

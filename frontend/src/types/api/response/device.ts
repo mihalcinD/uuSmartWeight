@@ -24,6 +24,7 @@ type DeviceDataExtended = DeviceDataResponse & {
   averageTimePerSet: number;
   averageTimePerExercise: number;
   numberOfSets: number;
+  numberOfExercises: number;
 };
 
 export type { DeviceDataResponse, SetResponse, DeviceDataExtended, ExerciseResponse };
