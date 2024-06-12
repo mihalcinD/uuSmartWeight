@@ -6,9 +6,14 @@ interface DeviceDetailSeries {
   createdAt?: Date
   endedAt?:   Date
 }
+interface DeviceDetailExercise {
+  id: number
+  series: DeviceDetailSeries[]
+}
+
 interface DeviceDetail {
   numberOfExercises: number
-  series: DeviceDetailSeries[]
+  exercises: DeviceDetailExercise[]
   totalTime: number
   points: number
   bestScore: number
@@ -38,6 +43,7 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
                 },
               },
               select: {
+                id: true,
                 createdAt: true,
                 endedAt: true,
                 series: {
@@ -56,18 +62,29 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
       });
       
       let numberOfSeries = 0;
-      let series: DeviceDetailSeries[] = [];
       let totalTime = 0;
       let points = 0;
 
-      for (const dbExercise of dbDevice.exercises) {
+      const exercises = new Array<DeviceDetailExercise>(dbDevice.exercises.length);
+
+      for (let eIndex = 0; eIndex < dbDevice.exercises.length; eIndex++) {
+        const dbExercise = dbDevice.exercises[eIndex];
         numberOfSeries += dbExercise.series.length;
         totalTime += dbExercise.endedAt.getTime() - dbExercise.createdAt.getTime();
 
         points += 10 + dbExercise.series.length * 5;
-        for (const dbSeries of dbExercise.series) {
-          series.push(dbSeries);
+
+        const series = new Array<DeviceDetailSeries>(dbExercise.series.length);
+
+        for (let sIndex = 0; eIndex < dbExercise.series.length; eIndex++) {
+          const dbSeries = dbExercise.series[sIndex];
+          series[sIndex] = dbSeries;
           points += dbSeries.numberOfRepetitions * 2;
+        }
+
+        exercises[eIndex] = {
+          id: dbExercise.id,
+          series,
         }
       }
 
@@ -90,7 +107,7 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
 
       return {
         numberOfExercises: dbDevice.exercises.length,
-        series,
+        exercises,
         totalTime,
         points,
         bestScore,
