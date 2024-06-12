@@ -15,7 +15,7 @@ const Statistics = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const date = useMemo(() => searchParams.get('date'), [searchParams]);
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(date));
-  const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(date ?? skipToken, { pollingInterval: 30000 });
+  const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(date ?? skipToken, { pollingInterval: 10000 });
   const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
 
   const onDateChange = (date: Dayjs | null) => {

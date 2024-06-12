@@ -15,7 +15,7 @@ const Dashboard = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(dayjs().format('YYYY-MM-DD'), {
-    pollingInterval: 30000,
+    pollingInterval: 10000,
   });
   const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
 

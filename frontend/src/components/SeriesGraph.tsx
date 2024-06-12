@@ -31,7 +31,15 @@ const SeriesGraph = ({ isLoading = true, data }: Props) => {
     <BarChart
       series={chartSeries}
       height={500}
-      xAxis={[{ scaleType: 'band', data: sets.map(set => dayjs(set.createdAt).format('HH:MM:ss')), label: 'Time' }]}
+      xAxis={[
+        {
+          scaleType: 'band',
+          data: sets.map(set => {
+            return dayjs(set.createdAt).format('HH:mm:ss');
+          }),
+          label: 'Time',
+        },
+      ]}
       yAxis={[{ label: 'Repetitions', tickMinStep: 1 }]}
       slotProps={{ legend: { hidden: true } }}
       tooltip={{ trigger: 'axis' }}
