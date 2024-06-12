@@ -22,7 +22,7 @@ let currSleepTime = 0
 export const mockRouter = express.Router();
 
 // postData
-mockRouter.post("/postData", async (request: Request, response: Response) => {
+mockRouter.post("/bulk", async (request: Request, response: Response) => {
   
     //log REQ body
     console.log("[REQ body]: ")
@@ -38,8 +38,12 @@ mockRouter.post("/postData", async (request: Request, response: Response) => {
     //responses
     switch (mockRes) {
         case 200:
-                       
-            return response.status(200).json(request.body);
+            let res: any = []
+            request.body.forEach((item: { id: any; }) => {
+                res.push(item.id)
+            });
+
+            return response.status(200).json(res);
 
             break;
     
