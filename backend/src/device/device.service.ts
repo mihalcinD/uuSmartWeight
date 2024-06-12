@@ -76,7 +76,7 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
 
         const series = new Array<DeviceDetailSeries>(dbExercise.series.length);
 
-        for (let sIndex = 0; eIndex < dbExercise.series.length; eIndex++) {
+        for (let sIndex = 0; sIndex < dbExercise.series.length; sIndex++) {
           const dbSeries = dbExercise.series[sIndex];
           series[sIndex] = dbSeries;
           points += dbSeries.numberOfRepetitions * 2;
