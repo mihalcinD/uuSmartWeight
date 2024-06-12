@@ -40,19 +40,11 @@ export async function createExercise(deviceId: number, date: Date): Promise<numb
   }
   //
 
-  // Create new Exercise and Series, return new Exercise ID
+  // Create new Exercise, return new Exercise ID
   const dbExercise = await db.exercise.create({
     data: {
       createdAt: date,
       deviceId: deviceId,
-    }
-  });
-
-  await db.series.create({
-    data: {
-      createdAt: date,
-      exerciseId: dbExercise.id,
-      numberOfRepetitions: 0,
     }
   });
 
