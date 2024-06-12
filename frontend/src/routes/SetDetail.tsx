@@ -44,7 +44,7 @@ const SetDetail = () => {
           color={'primary'}
           sx={{ fontWeight: 'bold', minHeight: 50 }}
           onClick={() => navigate(-1)}>
-          Go back to statistics
+          Go back
         </Button>
       </Paper>
     </ContentWrapper>

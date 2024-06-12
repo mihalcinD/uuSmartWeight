@@ -11,12 +11,13 @@ import { formatTime } from '../helpers/time.ts';
 import { skipToken } from '@reduxjs/toolkit/query';
 import SeriesGraph from '../components/SeriesGraph.tsx';
 
-const Devices = () => {
+const Statistics = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const date = useMemo(() => searchParams.get('date'), [searchParams]);
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(date));
   const { data, isLoading, fulfilledTimeStamp } = useGetDeviceDataQuery(date ?? skipToken, { pollingInterval: 30000 });
   const lastUpdate = useMemo(() => dayjs(fulfilledTimeStamp).format('HH:mm:ss'), [fulfilledTimeStamp]);
+
   const onDateChange = (date: Dayjs | null) => {
     if (!date) return;
     setSearchParams({ date: date.format('YYYY-MM-DD') });
@@ -41,13 +42,13 @@ const Devices = () => {
           gap: 4,
         }}>
         <Stack flex={1} gap={5}>
-          <Stack flexDirection={'row'} gap={10} justifyContent={'space-between'}>
+          <Stack flexDirection={'row'} justifyContent={'space-between'}>
             <Typography variant={'h3'} component={'h1'} fontWeight={'bold'}>
               Statistics
             </Typography>
             <DatePicker label="Select a date" value={dateValue} onChange={onDateChange} />
           </Stack>
-          <SeriesGraph isLoading={isLoading} data={data?.series} />
+          <SeriesGraph isLoading={isLoading} data={data?.exercises} />
         </Stack>
         <Stack minWidth={300} gap={5}>
           <BestScoreBox score={data?.points} bestScore={data?.bestScore} isLoading={isLoading} />
@@ -55,7 +56,7 @@ const Devices = () => {
             <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} isLoading={isLoading} />
             <Stack direction={'row'} spacing={5}>
               <SummaryItem label={'Exercises'} value={data?.numberOfExercises} small isLoading={isLoading} />
-              <SummaryItem label={'Total sets'} value={data?.series.length} small isLoading={isLoading} />
+              <SummaryItem label={'Total sets'} value={data?.numberOfSets} small isLoading={isLoading} />
             </Stack>
             <SummaryItem
               label={'Average sets per exercise'}
@@ -85,4 +86,4 @@ const Devices = () => {
   );
 };
 
-export default Devices;
+export default Statistics;

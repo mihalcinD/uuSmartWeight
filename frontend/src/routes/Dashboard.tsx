@@ -55,7 +55,7 @@ const Dashboard = () => {
           <Stack spacing={7}>
             <Stack direction={'row'} spacing={5}>
               <SummaryItem label={'Exercises'} value={data?.numberOfExercises} isLoading={isLoading} />
-              <SummaryItem label={'Total sets'} value={data?.series.length} isLoading={isLoading} />
+              <SummaryItem label={'Total sets'} value={data?.numberOfSets} isLoading={isLoading} />
               <SummaryItem label={'Total time'} value={formatTime(data?.totalTime)} isLoading={isLoading} />
             </Stack>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={5}>

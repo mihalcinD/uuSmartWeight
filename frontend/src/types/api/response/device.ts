@@ -1,6 +1,6 @@
 type DeviceDataResponse = {
   numberOfExercises: number;
-  series: SetResponse[];
+  exercises: ExerciseResponse[];
   totalTime: number;
   points: number;
   bestScore: number;
@@ -8,15 +8,22 @@ type DeviceDataResponse = {
 
 type SetResponse = {
   id: number;
+  exerciseId: number;
   numberOfRepetitions: number;
   createdAt: string;
   endedAt: string;
+};
+
+type ExerciseResponse = {
+  id: number;
+  series: SetResponse[];
 };
 
 type DeviceDataExtended = DeviceDataResponse & {
   averageSetsPerExercise: number;
   averageTimePerSet: number;
   averageTimePerExercise: number;
+  numberOfSets: number;
 };
 
-export type { DeviceDataResponse, SetResponse, DeviceDataExtended };
+export type { DeviceDataResponse, SetResponse, DeviceDataExtended, ExerciseResponse };

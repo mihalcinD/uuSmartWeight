@@ -2,7 +2,7 @@ import { createTheme } from '@mui/material';
 import { deepOrange, indigo } from '@mui/material/colors';
 
 export const config = {
-  domain: 'http://localhost:3000/', //'https://uusmartweight-backend.onrender.com/',
+  domain: 'https://uusmartweight-backend.onrender.com/',
 };
 
 export const lightTheme = createTheme({

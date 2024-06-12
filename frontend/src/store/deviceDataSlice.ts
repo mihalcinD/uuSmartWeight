@@ -4,23 +4,16 @@ import { DeviceDataExtended, DeviceDataResponse } from '../types/api/response/de
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     getDeviceData: builder.query<DeviceDataExtended, string>({
-      //TODO change path to /device/detail when api is ready
-      query: date => `device?date=${date}&id=1&detailed=1`,
+      query: date => `device/detail?date=${date}&id=3&detailed=1`,
       providesTags: (_result, _error, arg) => [{ type: 'DeviceData', id: arg }],
       transformResponse: (responseData: DeviceDataResponse) => {
-        //TODO remove this when api is ready
-        //@ts-expect-error array destructuring just for json server, will be removed
-        if (responseData.length === 0) {
-          return undefined;
-        }
-        //@ts-expect-error array destructuring just for json server, will be removed
-        const response = responseData[0];
-
+        const sets = responseData.exercises.reduce((acc, exercise) => acc + exercise.series.length, 0);
         return {
-          ...response,
-          averageSetsPerExercise: response.series.length / response.numberOfExercises,
-          averageTimePerSet: response.totalTime / response.series.length,
-          averageTimePerExercise: response.totalTime / response.numberOfExercises,
+          ...responseData,
+          averageSetsPerExercise: Math.round(sets / responseData.numberOfExercises),
+          averageTimePerSet: responseData.totalTime / sets,
+          averageTimePerExercise: responseData.totalTime / responseData.numberOfExercises,
+          numberOfSets: sets,
         };
       },
     }),
