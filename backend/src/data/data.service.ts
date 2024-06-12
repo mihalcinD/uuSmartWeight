@@ -29,12 +29,9 @@ interface CreateBulkResponse {
 }
 
 export async function createBulk(bulkData: Data[]): Promise<CreateBulkResponse> {
-    let testedDeviceTokens: string[] = [];
     let deviceTokenDeviceID: DeviceTokenDeviceID = {};
 
     for (const data of bulkData) {
-        if (testedDeviceTokens.includes(data.deviceToken)) continue;
-
         const deviceFromToken: any = await db.device.findUnique({
             where: {token: data.deviceToken},
             select: {

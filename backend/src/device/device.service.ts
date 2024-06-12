@@ -12,7 +12,6 @@ interface DeviceDetailExercise {
 }
 
 interface DeviceDetail {
-  numberOfExercises: number
   exercises: DeviceDetailExercise[]
   totalTime: number
   points: number
@@ -106,7 +105,6 @@ export async function getDeviceDetail(id: number, currentDate: Date, detailed: b
       }
 
       return {
-        numberOfExercises: dbDevice.exercises.length,
         exercises,
         totalTime,
         points,
