@@ -7,7 +7,13 @@ interface GetSeriesDetailPoint {
   createdAt: Date
 }
 
-export async function getSeriesDetail(seriesID: number): Promise<GetSeriesDetailPoint[]> {
+interface SeriesDetail {
+  numberOfRepetitons: number,
+  points: GetSeriesDetailPoint[],
+  createdAt: Date
+}
+
+export async function getSeriesDetail(seriesID: number): Promise<SeriesDetail> {
   try {
     const dbSeries: any = await db.series.findFirstOrThrow({
         where: {
@@ -17,11 +23,13 @@ export async function getSeriesDetail(seriesID: number): Promise<GetSeriesDetail
           }
         },
         select: {
+          createdAt: true,
+          numberOfRepetitions: true,
           points: true,
         }
     });
 
-    return dbSeries.points;
+    return dbSeries;
   } catch(e) {
     throw(e);
   }
