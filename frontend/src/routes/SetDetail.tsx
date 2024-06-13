@@ -11,6 +11,7 @@ import RepeatIcon from '@mui/icons-material/Repeat';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import InfoIcon from '@mui/icons-material/Info';
 const SetDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { isLoading, data } = useGetSetDetailQuery(id ? Number(id) : skipToken);
@@ -51,6 +52,7 @@ const SetDetail = () => {
           Set detail
         </Typography>
         <Stack direction={'row'} gap={2} flexWrap={'wrap'}>
+          <Chip icon={<InfoIcon />} label={'Biceps curls'} size={'medium'} sx={{ fontSize: 20, px: 3, py: 3 }} />
           <Chip
             icon={<RepeatIcon />}
             label={data?.numberOfRepetitions + ' reps'}
